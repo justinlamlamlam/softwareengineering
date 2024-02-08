@@ -10,4 +10,15 @@ Searching up: '"Course Code" site: github.com' or 'Course Code after:2024-01-01'
 
 Testing123456
 
-Jiabo Testing Hello
+PROCESS OF CHANGING STUFF:
+
+Create a branch:
+git checkout -b branch_name 
+
+(After making changes) Commit change to your local repository:
+git commit -m "Message"
+
+Push to original branch:
+git push origin branch_name
+
+Go on github and create pull request

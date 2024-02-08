@@ -16,7 +16,9 @@ Create a branch:
 git checkout -b branch_name 
 
 (After making changes) Commit change to your local repository:
+
 git add .
+
 git commit -m "Message"
 
 Push to original branch:

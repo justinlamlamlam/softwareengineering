@@ -12,6 +12,10 @@ Testing123456
 
 Testing789
 
+PROCESS OF PULLING:
+
+git pull origin branch_name
+
 PROCESS OF CHANGING STUFF:
 
 Create a branch:

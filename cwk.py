@@ -51,9 +51,29 @@ if resetdb:
         
 
 #route to the index
-@app.route('/')
+@app.route('/', methods=['POST','GET'])
+@app.route('/login.html', methods=['POST','GET'])
+def login():
+    
+    return render_template('login.html')
+
+#Register page
+@app.route('/register.html', methods=['POST','GET'])
+def register():
+    
+    return render_template('register.html')
+  
+#Companies page
+@app.route('/companies.html', methods=['POST','GET'])
+def company():
+    
+    return render_template('companies.html')
+
+#Home page
+@app.route('/index.html', methods=['POST','GET'])
 def index():
-    with open('README.md') as readme:
-      with open('requirements.txt') as req:
-        return render_template('index.html', README=readme.read(), requirements=req.read())
+    
+    return render_template('index.html')
+
+
 

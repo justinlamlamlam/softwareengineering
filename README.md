@@ -10,6 +10,12 @@ Searching up: '"Course Code" site: github.com' or 'Course Code after:2024-01-01'
 
 Testing123456
 
+Testing789
+
+PROCESS OF PULLING:
+
+git pull origin branch_name
+
 PROCESS OF CHANGING STUFF:
 
 Create a branch:

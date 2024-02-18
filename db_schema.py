@@ -84,5 +84,8 @@ def dbinit():
 
     db.session.add_all(all_companies)
 
+    hashed_password = security.generate_password_hash("123")
+    db.session.add(User("Test","jiaboj08@gmail.com",hashed_password))
+
     # commit all the changes to the database file
     db.session.commit()

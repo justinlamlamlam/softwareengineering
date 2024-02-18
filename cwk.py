@@ -54,15 +54,98 @@ if resetdb:
 @app.route('/', methods=['POST','GET'])
 @app.route('/login.html', methods=['POST','GET'])
 def login():
-    
-    return render_template('login.html')
+    if request.method == 'POST':
+        #Gets all info from the form 
+        username = request.values.get('username')
+        user_password = request.values.get('user_password')
+        #gets the user based on the username entered 
+        user = User.query.filter_by(username=username).first()
+        #If user doesnt exist 
+        if user is None:
+            return render_template('login.html',message="Username does not exist")
+        #Checks the password in a secure way 
+        if not security.check_password_hash(user.password, user_password):
+            return render_template("login.html",message="Password Incorrect")
+
+        #Sets all the session keys 
+        session['id'] = user.id 
+        session['username'] = user.username
+        
+
+        return render_template('home.html',message="You have now logged in!")
+
+    else:
+        return render_template('login.html')
+
 
 #Register page
 @app.route('/register.html', methods=['POST','GET'])
 def register():
     
-    return render_template('register.html')
+    if request.method == 'POST':
+        username = request.values.get('username') #gets the username from the form
+        user_password = request.values.get('user_password') #gets the password from the form
+        confirm_password = request.values.get('confirm_password') #gets the confirm pwd from the form
+        hashed = security.generate_password_hash(user_password) #hashes the password
+        user_email = request.values.get('user_email') #gets the email from the form
+
+
+        if confirm_password != user_password: #if the confirm password is different to the password 
+            return render_template('register.html',message="Passwords do not match")
+        
+        db.session.add(User(username,user_email,hashed))
+
+        try:
+            db.session.commit()
+            #Generates a 8 digit random code which combines numbers and letters
+            characters = string.ascii_letters + string.digits
+            code = ''.join(random.choice(characters) for i in range(8))
+            #This is the message which will be sent to an email
+            msg = Message("Verify Your Email",
+                  sender=("App Name","u2200657@live.warwick.ac.uk"),
+                  body=("Here is the code: " + code),
+                  recipients=['u2200657@live.warwick.ac.uk'])
+                  #recipients=[user_email]) #This would be the actual code
+            mail.send(msg) #sends the mail 
+            session['code'] = code #sets the session code to be code
+            return render_template('verify.html',message='',username=username,user_password=user_password)
+
+        except:
+            return render_template('register.html',message="Username/Email already used")
+    else:
+        return render_template('register.html')
   
+#route to the verify page
+@app.route('/verify.html',methods=['POST','GET'])
+def verify():
+    if request.method == 'POST':
+        #Gets all the info from the form 
+        username = request.values.get('username')
+        user_password = request.values.get('user_password')
+        code = request.values.get('code')
+
+        #Checks to see if the code entered is the same as the verification code
+        if code == session['code']:
+            #If correct then log in the user 
+            return login()
+        else:
+            #Redirects the user back to register page, and deletes the info from the database
+            users = User.query.filter_by(username=username).first()
+            userid = users.id
+            user = User.query.get(userid)
+            db.session.delete(user)
+            db.session.commit()
+            
+            return render_template('register.html',message="Verification Code Incorrect")
+
+@app.route('/logout.html')
+def logout():
+    #Removes the id from session 
+    session.pop('id',None)
+    session.pop('username',None)
+    session.pop('code',None)
+    return login()
+
 #Companies page
 @app.route('/companies.html', methods=['POST','GET'])
 def company():
@@ -70,10 +153,10 @@ def company():
     return render_template('companies.html')
 
 #Home page
-@app.route('/index.html', methods=['POST','GET'])
-def index():
+@app.route('/home.html', methods=['POST','GET'])
+def home():
     
-    return render_template('index.html')
+    return render_template('home.html')
 
 
 

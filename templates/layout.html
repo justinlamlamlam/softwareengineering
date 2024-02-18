@@ -1,12 +1,30 @@
 <!DOCTYPE html>
-<html lang="">
-  <head>
-    <meta charset="utf-8">
-    <title></title>
-  </head>
-  <body>
-    <header></header>
-    <main></main>
-    <footer></footer>
-  </body>
+<html lang="en">
+    <head>
+        <title>Coursework</title>
+        <link rel="stylesheet" href="static/css/main.css" type="text/css"
+charset="utf-8">
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Russo One">
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=ABeeZee">
+    </head>
+    <body>
+
+        <ul>
+            <li><a style="padding:0; padding-left: 10px; padding-right: 10px;" href="/"><img src="static/home.png" height = "40px" weight = "40px"/></a></li>
+            <li><a href="home.html">Home</a></li>
+            
+            <li><a href="companies.html">Companies</a></li>
+            <li><a href="logout.html">LogOut</a></li>
+
+        </ul>
+
+        
+        <br><br><br><br><br><br>
+        {% block content %}
+        {% endblock %}
+
+        
+        
+    </body>
 </html>
+

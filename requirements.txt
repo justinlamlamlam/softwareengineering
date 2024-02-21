@@ -8,3 +8,5 @@ python-dotenv==0.20.0
 SQLAlchemy==1.4.46
 Werkzeug==2.0.3
 WTForms==3.0.0
+torch==2.2.0
+numpy==1.26.0

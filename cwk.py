@@ -12,6 +12,9 @@ from barcode import EAN13
 from barcode.writer import SVGWriter
 import random 
 import string 
+import numpy
+
+import analysis
 
 # create the Flask app
 from flask import Flask, render_template, request, session, redirect

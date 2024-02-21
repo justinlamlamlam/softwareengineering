@@ -15,7 +15,7 @@ fi
 # add virtual environment if it doesn't already exist
 if ! [[ -d vcwk ]]; then
     echo Adding virtual environment 
-    python3 -m venv vcwk
+    python3.11 -m venv vcwk
 
     # create pip.conf if doesn't exist
     echo Creating vcwk/pip.conf

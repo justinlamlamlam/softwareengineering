@@ -1,7 +1,44 @@
 {% extends "layout.html" %}
 {% block content %}
 
-<p>{{"Hello, " + session['username']}}</p>
+<div class="center">
+
+    <p>{{"Hello! " + session['username']}}</p>
+    
+        {% for entry in companies %}
+        <table id="eventtable" style="width: 600px;">
+        <thead>
+            <tr>
+
+                <d><th width='200px'><a href="company{{entry.id}}.html" style="font-size: 25px;"><br><br>{{entry.companyname}}</a></th></d>
+
+            </tr>
+        </thead>
+        <tbody>
+
+            <tr>
+                <td>Networth: {{entry.networth}}</td>
+                <td>Number of Employees: {{entry.num_emp}}</td>
+                <td>Stock Symbol: {{entry.stock_symb}}</td>
+                <td><br><br><br><br></td>
+            </tr>
+
+            <tr style="width:10px; height:10px; overflow: hidden;text-overflow: ellipsis;">
+                <td>CEO: {{entry.ceoname}}</td>
+                <td></td>
+
+                <td><img src="static/event/Event: {{entry.eventname}}" height = "150px" weight = "150px" onerror="this.onerror=null;this.src='static/event/Default-event.jpg'"/></td>
+            </tr>
+            
+        </tbody>
+        </table>
+        <br><br>
+        {% endfor %}
+    
+
+
+</div>
+
 
 
 

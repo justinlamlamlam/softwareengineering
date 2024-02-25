@@ -12,9 +12,15 @@ from barcode import EAN13
 from barcode.writer import SVGWriter
 import random 
 import string 
-import numpy
+#import numpy
 
 import analysis
+
+from selenium import webdriver
+from selenium.webdriver.common.keys import Keys
+from selenium.webdriver.common.by import By
+from selenium.webdriver.support.ui import WebDriverWait
+from selenium.webdriver.support import expected_conditions as EC
 
 # create the Flask app
 from flask import Flask, render_template, request, session, redirect
@@ -57,7 +63,11 @@ if resetdb:
 @app.route('/', methods=['POST','GET'])
 @app.route('/login.html', methods=['POST','GET'])
 def login():
+
     if request.method == 'POST':
+
+        webScraper() #won't be called here in final version but not sure where yet
+
         #Gets all info from the form 
         username = request.values.get('username')
         user_password = request.values.get('user_password')
@@ -171,5 +181,30 @@ def home():
     
     return render_template('home.html')
 
+def webScraper():
 
+    driver = webdriver.Firefox()
+
+    companies = Company.query.all()
+    for company in companies:
+        url = "https://www.google.co.uk"
+        driver.get(url)
+        driver.find_element(By.ID,'L2AGLb').click()
+        search_input = WebDriverWait(driver,10).until(EC.visibility_of_element_located((By.NAME,"q")))
+        search_input.send_keys(company.companyname)
+        search_input.send_keys(Keys.RETURN)
+        driver.implicitly_wait(2)
+        driver.find_element(By.LINK_TEXT,'News').click()
+        results = driver.find_elements(By.CLASS_NAME,'WlydOe')
+        for result in results:
+            app.logger.info(print(result.text))
+            app.logger.info(result.get_attribute('href'))
+
+        test = Story.query.filter_by(storyurl="https://www.wired.com/story/this-is-why-teslas-stainless-steel-cybertrucks-may-be-rusting/").first()
+        if test != None:
+            app.logger.info('yes')
+        else:
+            app.logger.info('no')
+
+    driver.close()
 

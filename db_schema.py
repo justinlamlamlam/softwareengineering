@@ -51,21 +51,17 @@ class Company_tag(db.Model):
         self.companyname=companyname
         self.tag=tag
     
+class Notification(db.Model):
+    __tablename__='notification'
+    userid = db.Column(db.Integer,primary_key=True)
+    storyid = db.Column(db.Integer,primary_key=True)
+
+    def __init__(self,userid,storyid):  
+        self.userid=userid
+        self.storyid=storyid
+
 class Story(db.Model):
     __tablename__='stories'
-    id = db.Column(db.Integer,primary_key=True)
-    #storyid = db.Column(db.Integer,primary_key=True)
-    storyurl = db.Column(db.Text) # unique but not primary key
-    impact = db.Column(db.Integer)
-
-    def __init__(self,storyid,storyurl,impact):  
-        #self.userid=userid
-        self.storyid=storyid
-        self.storyurl=storyurl
-        self.impact=impact
-
-class Notification(db.Model):
-    __tablename__='notifications'
     id = db.Column(db.Integer, primary_key=True)
     companyname = db.Column(db.String(20))
     url = db.Column(db.String(50))
@@ -154,6 +150,17 @@ def dbinit():
 
     hashed_password = security.generate_password_hash("123")
     db.session.add(User("Test","jiaboj08@gmail.com",hashed_password))
+
+    user_id = User.query.filter_by(username="Test").first().id
+    
+    db.session.add(Company_tracked(user_id,"Apple"))
+    db.session.add(Company_tracked(user_id,"Microsoft"))
+
+    storiesTEST = [
+        Story("Tesla","https://www.wired.com/story/this-is-why-teslas-stainless-steel-cybertrucks-may-be-rusting/","2024-02-25",-0.5)
+    ]
+
+    db.session.add_all(storiesTEST)
 
     # commit all the changes to the database file
     db.session.commit()

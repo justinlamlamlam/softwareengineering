@@ -66,7 +66,7 @@ def login():
 
     if request.method == 'POST':
 
-        webScraper() #won't be called here in final version but not sure where yet
+        #webScraper() #won't be called here in final version but not sure where yet
 
         #Gets all info from the form 
         username = request.values.get('username')

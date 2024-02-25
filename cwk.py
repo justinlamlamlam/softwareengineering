@@ -16,6 +16,12 @@ import string
 
 import analysis
 
+from selenium import webdriver
+from selenium.webdriver.common.keys import Keys
+from selenium.webdriver.common.by import By
+from selenium.webdriver.support.ui import WebDriverWait
+from selenium.webdriver.support import expected_conditions as EC
+
 # create the Flask app
 from flask import Flask, render_template, request, session, redirect
 app = Flask(__name__)
@@ -208,3 +214,34 @@ def untrackcompany():
     
     return render_template('companies.html',companies=companies,tracked=tracked)
 
+def webScraper():
+
+    driver = webdriver.Firefox()
+    companies = Company.query.all()
+    for company in companies:
+        driver.minimize_window()
+        url = "https://www.google.co.uk"
+        driver.get(url)
+        if driver.find_elements(By.ID,'L2AGLb'):
+            driver.find_element(By.ID,'L2AGLb').click()
+        search_input = WebDriverWait(driver,10).until(EC.visibility_of_element_located((By.NAME,"q")))
+        search_input.send_keys(company.companyname)
+        search_input.send_keys(Keys.RETURN)
+        search_input = WebDriverWait(driver,10).until(EC.visibility_of_element_located((By.LINK_TEXT,"News")))
+        driver.find_element(By.LINK_TEXT,'News').click()
+        results = driver.find_elements(By.CLASS_NAME,'WlydOe')
+        for result in results:
+            #app.logger.info(result.text)
+            link = result.get_attribute('href')
+            headline = app.logger.info(result.text.split('\n')[1])
+
+        #story = Story(link,analysis(headline))
+        #db.session.add(story)
+
+        #test = Story.query.filter_by(storyurl="https://www.wired.com/story/this-is-why-teslas-stainless-steel-cybertrucks-may-be-rusting/").first()
+        #if test != None:
+        #    app.logger.info('yes')
+        #else:
+        #    app.logger.info('no')
+
+    driver.close()

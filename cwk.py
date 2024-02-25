@@ -63,7 +63,11 @@ if resetdb:
 @app.route('/', methods=['POST','GET'])
 @app.route('/login.html', methods=['POST','GET'])
 def login():
+
     if request.method == 'POST':
+
+        webScraper() #won't be called here in final version but not sure where yet
+
         #Gets all info from the form 
         username = request.values.get('username')
         user_password = request.values.get('user_password')
@@ -182,38 +186,6 @@ def home():
     
     return render_template('home.html')
 
-
-@app.route('/trackcompany.html', methods=['POST'])
-def trackcompany():
-    companyname = request.values.get('companyname')
-
-    db.session.add(Company_tracked(session['id'],companyname))
-    db.session.commit()
-
-    companies = Company.query.all()
-    tracked_companies = Company_tracked.query.filter_by(userid = session['id'])
-    tracked = []
-    for i in tracked_companies:
-        tracked.append(i.companyname)
-    
-    return render_template('companies.html',companies=companies,tracked=tracked)
-
-@app.route('/untrackcompany.html', methods=['POST'])
-def untrackcompany():
-    companyname = request.values.get('companyname')
-    query = Company_tracked.query.filter_by(userid = session['id'],companyname = companyname).first()
-
-    db.session.delete(query)
-    db.session.commit()
-
-    companies = Company.query.all()
-    tracked_companies = Company_tracked.query.filter_by(userid = session['id'])
-    tracked = []
-    for i in tracked_companies:
-        tracked.append(i.companyname)
-    
-    return render_template('companies.html',companies=companies,tracked=tracked)
-
 def webScraper():
 
     driver = webdriver.Firefox()
@@ -245,3 +217,34 @@ def webScraper():
         #    app.logger.info('no')
 
     driver.close()
+
+@app.route('/trackcompany.html', methods=['POST'])
+def trackcompany():
+    companyname = request.values.get('companyname')
+
+    db.session.add(Company_tracked(session['id'],companyname))
+    db.session.commit()
+
+    companies = Company.query.all()
+    tracked_companies = Company_tracked.query.filter_by(userid = session['id'])
+    tracked = []
+    for i in tracked_companies:
+        tracked.append(i.companyname)
+    
+    return render_template('companies.html',companies=companies,tracked=tracked)
+
+@app.route('/untrackcompany.html', methods=['POST'])
+def untrackcompany():
+    companyname = request.values.get('companyname')
+    query = Company_tracked.query.filter_by(userid = session['id'],companyname = companyname).first()
+
+    db.session.delete(query)
+    db.session.commit()
+
+    companies = Company.query.all()
+    tracked_companies = Company_tracked.query.filter_by(userid = session['id'])
+    tracked = []
+    for i in tracked_companies:
+        tracked.append(i.companyname)
+    
+    return render_template('companies.html',companies=companies,tracked=tracked)

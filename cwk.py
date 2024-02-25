@@ -105,7 +105,7 @@ def register():
             code = ''.join(random.choice(characters) for i in range(8))
             #This is the message which will be sent to an email
             msg = Message("Verify Your Email",
-                  sender=("StockBook","u2200657@live.warwick.ac.uk"),
+                  sender=("MarketMood","u2200657@live.warwick.ac.uk"),
                   body=("Here is the code: " + code),
                   #recipients=['u2200657@live.warwick.ac.uk'])
                   recipients=[user_email]) #This would be the actual code
@@ -154,13 +154,18 @@ def logout():
 def companies():
 
     companies = Company.query.all()
+    tracked_companies = Company_tracked.query.filter_by(userid = session['id'])
+    tracked = []
+    for i in tracked_companies:
+        tracked.append(i.companyname)
     
-    return render_template('companies.html',companies=companies)
+    return render_template('companies.html',companies=companies,tracked=tracked)
 
 #Individual companies page
 @app.route('/company<company_id>.html',methods=['POST','GET'])
 def company(company_id):
 
+    #Gets company from the company id 
     company = Company.query.filter_by(id = company_id).first()
 
     return render_template('company.html',company=company)
@@ -172,4 +177,34 @@ def home():
     return render_template('home.html')
 
 
+@app.route('/trackcompany.html', methods=['POST'])
+def trackcompany():
+    companyname = request.values.get('companyname')
+
+    db.session.add(Company_tracked(session['id'],companyname))
+    db.session.commit()
+
+    companies = Company.query.all()
+    tracked_companies = Company_tracked.query.filter_by(userid = session['id'])
+    tracked = []
+    for i in tracked_companies:
+        tracked.append(i.companyname)
+    
+    return render_template('companies.html',companies=companies,tracked=tracked)
+
+@app.route('/untrackcompany.html', methods=['POST'])
+def untrackcompany():
+    companyname = request.values.get('companyname')
+    query = Company_tracked.query.filter_by(userid = session['id'],companyname = companyname).first()
+
+    db.session.delete(query)
+    db.session.commit()
+
+    companies = Company.query.all()
+    tracked_companies = Company_tracked.query.filter_by(userid = session['id'])
+    tracked = []
+    for i in tracked_companies:
+        tracked.append(i.companyname)
+    
+    return render_template('companies.html',companies=companies,tracked=tracked)
 

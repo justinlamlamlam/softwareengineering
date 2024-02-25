@@ -145,5 +145,10 @@ def dbinit():
     hashed_password = security.generate_password_hash("123")
     db.session.add(User("Test","jiaboj08@gmail.com",hashed_password))
 
+    user_id = User.query.filter_by(username="Test").first().id
+    
+    db.session.add(Company_tracked(user_id,"Apple"))
+    db.session.add(Company_tracked(user_id,"Microsoft"))
+
     # commit all the changes to the database file
     db.session.commit()

@@ -5,6 +5,7 @@
 
 }
 
+
 ul {
     list-style-type: none;
     overflow: hidden;
@@ -55,9 +56,73 @@ table {
     background-color: #F9E6B2;
     background: linear-gradient(to bottom right,#F9E6B2,#F7D28A );
     box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.2);
+    margin-bottom: 50px;
+    padding-bottom: 40px;
 }
 
 td {
     margin: auto;
     padding: 5px;
+
+}
+
+td input[type="submit"] {
+    background-color: gray;
+    color:azure;
+    text-decoration: none;
+    padding: 8px;
+    font-weight: bold;
+    border-radius: 5px;
+    font-size: medium;
+    cursor: pointer;
+}
+
+td input[type="submit"]:hover {
+
+    background-color:aliceblue;
+    color: #292a2d;
+
+}
+
+
+.pagination {
+  display: inline-block;
+}
+
+.pagination button {
+  color: black;
+  float: left;
+  padding: 8px 16px;
+  text-decoration: none;
+  transition: background-color .3s;
+  border: 1px solid #ddd;
+  margin: 0 4px;
+  border-radius: 5px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.pagination button.active {
+  background-color: #4CAF50;
+  color: white;
+  border: 1px solid #4CAF50;
+}
+
+.pagination button:hover:not(.active) {background-color: #ddd;}
+
+#searchbar{
+    width: 250px;
+    margin: auto;
+    background-image: url('/static/searchicon.png');
+    background-position: 10px 12px;
+    background-size: 25px;
+    background-repeat: no-repeat;
+    border: 3px solid #ddd;
+    padding: 10px 20px 10px 45px;
+    border-color: #6778aa;
+    height: 25px;
+}
+
+form {
+    text-align: center;
 }

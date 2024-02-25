@@ -3,10 +3,17 @@
 
 <div class="center">
 
-    <p>{{"Hello! " + session['username']}}</p>
-    
+    <input type="text" id="searchbar" onkeyup="searchbar()" placeholder="Search for companies...">
+    <c>Sort by</c>
+    <select onchange="sortList(this.value)">
+        <option value="1">Alphabetical Order</option>
+        <option value="2">Tracked Companies</option>
+
+    </select>
+    <br><br>
         {% for entry in companies %}
-        <table id="eventtable" style="width: 600px;">
+        
+        <table id="{{entry.id}}" name="companytable" style="width: 600px;">
         <thead>
             <tr>
 
@@ -25,17 +32,192 @@
 
             <tr style="width:10px; height:10px; overflow: hidden;text-overflow: ellipsis;">
                 <td>CEO: {{entry.ceoname}}</td>
-                <td></td>
 
-                <td><img src="static/event/Event: {{entry.eventname}}" height = "150px" weight = "150px" onerror="this.onerror=null;this.src='static/event/Default-event.jpg'"/></td>
+                {% if entry.companyname in tracked %}
+                <td>
+                    <form action="untrackcompany.html" method="POST" onsubmit="untrack()">
+                        <input type="hidden" name="companyname" value="{{entry.companyname}}">
+                        <input type="submit" value="Untrack Company" style="color: rgb(233, 136, 136);">
+                    </form>
+                    <hidden style="display: none;">tracked</hidden>
+                </td>
+                {% else %}
+                <td>
+                    <form action="trackcompany.html" method="POST">
+                        <input type="hidden" name="companyname" value="{{entry.companyname}}">
+                        <input type="submit" value="Track Company">
+                    </form>
+                    <hidden style="display: none;">untracked</hidden>
+
+                </td>
+                {% endif %}      
+
+                <td><img src="static/logos/{{entry.companyname}}" height = "150px" weight = "150px" onerror="this.onerror=null;style='display: none;'"/></td>
             </tr>
             
         </tbody>
         </table>
-        <br><br>
+        
         {% endfor %}
-    
 
+        <div class="pagination">
+            <button onclick="pagination('1')">&laquo;</button>
+            <button id="button1" class="active" onclick="pagination('1')">1</button>
+            <button id="button2" onclick="pagination('2')">2</button>
+            <button id="button3" onclick="pagination('3')">3</button>
+            <button id="button4" onclick="pagination('4')">4</button>
+            <button onclick="pagination('4')">&raquo;</button>
+          </div>
+          
+        <script>
+            
+            window.onload=function(){
+                pagination("1");
+                sortList(1);
+            }
+
+            function pagination(number){
+    
+                const pageNumber = parseInt(number);
+    
+                const buttons = document.getElementsByTagName("button");
+                const tables = document.getElementsByTagName("table");
+    
+                // Loop through all buttons to remove 'active' class
+                for (let i = 0; i < buttons.length; i++) {
+                    buttons[i].classList.remove('active');
+                }
+    
+                for (let i = 0; i < tables.length; i++) {
+                    tables[i].style.display = "none";
+                }
+    
+                for (let i = (pageNumber-1)*5; i < pageNumber*5; i++) {
+                    if (tables[i] == null){
+                        break;
+                    }
+                        tables[i].style.display = "";
+                }
+                //document.getElementById(number).style.display = "";
+    
+                // Add 'active' class to the clicked button
+                buttons[pageNumber].classList.add('active');
+                        
+            }
+
+            function searchbar() {
+                    //Makes all the variables 
+                    var input, filter, tb, tr, a, i, txtValue, found;
+                    //Assigns values to the variables 
+                    input = document.getElementById("searchbar");
+                    //Makes the input into uppercase 
+                    filter = input.value.toUpperCase();
+                    tb = document.getElementsByName("companytable");
+
+                    //Loops until theres no table rows left (tr)
+                    for (i = 0; i < tb.length; i++) {
+                        //Gets all the stuff from the document that have the tag a 
+                        a = tb[i].getElementsByTagName("a")[0];
+                        txtValue = a.textContent || a.innerText;
+                        //makes the value to upper case and compares it to the input value 
+                        if (txtValue.toUpperCase().startsWith(filter) == true) {
+                            //Shows the table values 
+                            tb[i].style.display = "";
+
+                        } else {
+                            //Hides the table values that don't match the input
+                            tb[i].style.display = "none";
+                        }
+                    }
+                    
+                }
+
+                function untrack(){
+                    let text = "By clicking OK you will no longer be tracking the company";
+                    if (confirm(text) != true){
+                        event.preventDefault()
+                    }
+                }
+
+                function sortList(value) {
+                    var i, switching, b, shouldSwitch;
+                    console.log(value);
+                    if(value == 1){
+                        switching = true;
+                        /* Make a loop that will continue until
+                        no switching has been done: */
+                        while (switching) {
+                            // start by saying: no switching is done:
+                            switching = false;
+                            b = document.getElementsByName("companytable");
+                            // Loop through all list-items:
+                            for (i = 0; i < (b.length - 1); i++) {
+                                // start by saying there should be no switching:
+                                shouldSwitch = false;
+                                /* check if the next item should
+                                switch place with the current item: */
+                                a = b[i].getElementsByTagName("a")[0];
+                                txtValue = a.textContent || a.innerText;
+                                a2 = b[i+1].getElementsByTagName("a")[0];
+                                txtValue2 = a2.textContent || a2.innerText;
+
+                                if (txtValue.toLowerCase() > txtValue2.toLowerCase()) {
+                                    /* if next item is alphabetically
+                                    lower than current item, mark as a switch
+                                    and break the loop: */
+                                    shouldSwitch = true;
+                                    break;
+                                }
+                            }
+                            if (shouldSwitch) {
+                                /* If a switch has been marked, make the switch
+                                and mark the switch as done: */
+                                b[i].parentNode.insertBefore(b[i + 1], b[i]);
+                                switching = true;
+                            }
+                        }
+                    }
+
+                    if(value == 2){
+                        switching = true;
+                        /* Make a loop that will continue until
+                        no switching has been done: */
+                        while (switching) {
+                            // start by saying: no switching is done:
+                            switching = false;
+                            b = document.getElementsByName("companytable");
+                            // Loop through all list-items:
+                            for (i = 0; i < (b.length - 1); i++) {
+                                // start by saying there should be no switching:
+                                shouldSwitch = false;
+                                /* check if the next item should
+                                switch place with the current item: */
+                                a = b[i].getElementsByTagName("hidden")[0];
+                                txtValue = a.textContent || a.innerText;
+                                a2 = b[i+1].getElementsByTagName("hidden")[0];
+                                txtValue2 = a2.textContent || a2.innerText;
+
+                                if (txtValue.toLowerCase() == "untracked" && txtValue2.toLowerCase() == "tracked") {
+                                    /* if next item is alphabetically
+                                    lower than current item, mark as a switch
+                                    and break the loop: */
+                                    shouldSwitch = true;
+                                    break;
+                                }
+                            }
+                            if (shouldSwitch) {
+                                /* If a switch has been marked, make the switch
+                                and mark the switch as done: */
+                                b[i].parentNode.insertBefore(b[i + 1], b[i]);
+                                switching = true;
+                            }
+                        }
+                    }
+
+                    
+                }
+    
+        </script>
 
 </div>
 

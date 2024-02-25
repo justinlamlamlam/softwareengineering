@@ -147,8 +147,8 @@ def dbinit():
 
     user_id = User.query.filter_by(username="Test").first().id
     
-    db.session.add(Company_tracked(user_id,"Apple"))
-    db.session.add(Company_tracked(user_id,"Microsoft"))
+    #db.session.add(Company_tracked(user_id,"Apple"))
+    #db.session.add(Company_tracked(user_id,"Microsoft"))
 
     # commit all the changes to the database file
     db.session.commit()

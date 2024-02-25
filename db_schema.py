@@ -53,16 +53,12 @@ class Company_tag(db.Model):
     
 class Notification(db.Model):
     __tablename__='notification'
-    id = db.Column(db.Integer,primary_key=True)
-    #storyid = db.Column(db.Integer,primary_key=True)
-    storyurl = db.Column(db.Text) # unique but not primary key
-    impact = db.Column(db.Integer)
+    userid = db.Column(db.Integer,primary_key=True)
+    storyid = db.Column(db.Integer,primary_key=True)
 
-    def __init__(self,storyid,storyurl,impact):  
-        #self.userid=userid
+    def __init__(self,userid,storyid):  
+        self.userid=userid
         self.storyid=storyid
-        self.storyurl=storyurl
-        self.impact=impact
 
 class Story(db.Model):
     __tablename__='stories'

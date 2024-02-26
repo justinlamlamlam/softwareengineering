@@ -64,14 +64,16 @@ class Story(db.Model):
     __tablename__='stories'
     id = db.Column(db.Integer, primary_key=True)
     companyname = db.Column(db.String(20))
-    url = db.Column(db.String(50))
+    url = db.Column(db.String(100))
+    headline = db.Column(db.String(100))
     #Not sure how date time will be stored
     timestamp = db.Column(db.Text)
     impact = db.Column(db.Integer)
 
-    def __init__(self,companyname,url,timestamp,impact):  
+    def __init__(self,companyname,url,headline,timestamp,impact):  
         self.companyname=companyname
         self.url=url
+        self.headline=headline
         self.timestamp=timestamp
         self.impact=impact
 
@@ -82,7 +84,7 @@ def dbinit():
         Company("Apple",2820.00,161000,"AAPL","Tim Cook"),
         Company("Microsoft",2992.91,221000,"MSFT","Satya Nadella"),
         Company("Amazon",1750.00,1525000,"AMZN","Andy Jassy"),
-        Company("Google",1801.00,156500,"GOOG","Sundar Pichai"),
+        #Company("Google",1801.00,156500,"GOOG","Sundar Pichai"), there are problems with having Google specifically as a company
         Company("Meta Platforms",1206.68,67317,"META","Mark Zuckerberg"),
 
         #Finance
@@ -151,7 +153,7 @@ def dbinit():
     db.session.add(Company_tracked(user_id,"Microsoft"))
 
     storiesTEST = [
-        Story("Tesla","https://www.wired.com/story/this-is-why-teslas-stainless-steel-cybertrucks-may-be-rusting/","2024-02-25",-0.5)
+        Story("Apple","https://www.forbes.com/sites/davidphelan/2024/02/25/ios-174-release-date-exactly-when-apple-will-change-the-iphone-forever/","Apple Ponders Making New Wearables: AI Glasses, AirPods With Cameras, Smart Ring","2024-02-25",0.5)
     ]
 
     db.session.add_all(storiesTEST)

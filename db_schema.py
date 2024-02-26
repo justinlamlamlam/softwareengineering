@@ -142,12 +142,6 @@ def dbinit():
 
     db.session.add_all(all_tags)
 
-    storiesTEST = [
-        Story(1,"https://www.wired.com/story/this-is-why-teslas-stainless-steel-cybertrucks-may-be-rusting/",-0.5)
-    ]
-
-    db.session.add_all(storiesTEST)
-
     hashed_password = security.generate_password_hash("123")
     db.session.add(User("Test","jiaboj08@gmail.com",hashed_password))
 

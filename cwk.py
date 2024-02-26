@@ -66,7 +66,7 @@ def login():
 
     if request.method == 'POST':
 
-        #webScraper() #won't be called here in final version but not sure where yet
+        webScraper() #won't be called here in final version but not sure where yet
 
         #Gets all info from the form 
         username = request.values.get('username')
@@ -202,20 +202,30 @@ def webScraper():
         search_input = WebDriverWait(driver,10).until(EC.visibility_of_element_located((By.LINK_TEXT,"News")))
         driver.find_element(By.LINK_TEXT,'News').click()
         results = driver.find_elements(By.CLASS_NAME,'WlydOe')
-        for result in results:
-            #app.logger.info(result.text)
+
+        times = driver.find_elements(By.XPATH,"//div[@class='OSrXXb rbYSKb LfVVr']")
+
+        companyStories = Story.query.filter_by(companyname=company.companyname)
+
+        for result,time in zip(results,times):
             link = result.get_attribute('href')
             headline = app.logger.info(result.text.split('\n')[1])
+            inDB = 0
+            for c in companyStories:
+                if c.url == link:
+                    app.logger.info("article already in database") 
+                    inDB = 1
+                #if text_similarity(c.headline,headline) < 0.5:
+                #   app.logger.info("same story already in database")
+                #   inDB = 1
+            if inDB == 0:
+                #app.logger.info("can add to db")
+                #do stuff....
 
-        #story = Story(link,analysis(headline))
-        #db.session.add(story)
+                #story = Story(company.companyName,link,headline,time.text,analysis(headline))
+                #db.session.add(story)
 
-        #test = Story.query.filter_by(storyurl="https://www.wired.com/story/this-is-why-teslas-stainless-steel-cybertrucks-may-be-rusting/").first()
-        #if test != None:
-        #    app.logger.info('yes')
-        #else:
-        #    app.logger.info('no')
-
+    db.session.commit()
     driver.close()
 
 @app.route('/trackcompany.html', methods=['POST'])

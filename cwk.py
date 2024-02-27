@@ -66,7 +66,7 @@ def login():
 
     if request.method == 'POST':
 
-        webScraper() #won't be called here in final version but not sure where yet
+        #webScraper() #won't be called here in final version but not sure where yet
 
         #Gets all info from the form 
         username = request.values.get('username')
@@ -84,8 +84,7 @@ def login():
         session['id'] = user.id 
         session['username'] = user.username
         
-
-        return render_template('home.html',message="You have now logged in!")
+        return home()
 
     else:
         return render_template('login.html')
@@ -169,7 +168,9 @@ def companies():
     for i in tracked_companies:
         tracked.append(i.companyname)
     
-    return render_template('companies.html',companies=companies,tracked=tracked)
+    notices = notification()
+    
+    return render_template('companies.html',companies=companies,tracked=tracked,notices=notices)
 
 #Individual companies page
 @app.route('/company<company_id>.html',methods=['POST','GET'])
@@ -184,14 +185,17 @@ def company(company_id):
         tracked.append(i.companyname)
     
     stories = Story.query.filter_by(companyname=company.companyname)
+    notices = notification()
 
-    return render_template('company.html',company=company,tracked=tracked,stories=stories)
+    return render_template('company.html',company=company,tracked=tracked,stories=stories,notices=notices)
 
 #Home page
 @app.route('/home.html', methods=['POST','GET'])
 def home():
     
-    return render_template('home.html')
+    notices = notification()
+
+    return render_template('home.html',notices=notices)
 
 def webScraper():
 
@@ -235,6 +239,7 @@ def webScraper():
     db.session.commit()
     driver.close()
 
+#When tracking a company
 @app.route('/trackcompany.html', methods=['POST','GET'])
 def trackcompany():
     companyname = request.values.get('companyname')
@@ -248,14 +253,17 @@ def trackcompany():
     for i in tracked_companies:
         tracked.append(i.companyname)
     
+    notices = notification()
+
     if request.method == 'GET':
         company_id = request.values.get('companyid')
         company = Company.query.filter_by(id = company_id).first()
         stories = Story.query.filter_by(companyname=company.companyname)
-        return render_template('company.html',company=company,tracked=tracked,stories=stories)
+        return render_template('company.html',company=company,tracked=tracked,stories=stories,notices=notices)
     else:
-        return render_template('companies.html',companies=companies,tracked=tracked)
+        return render_template('companies.html',companies=companies,tracked=tracked,notices=notices)
 
+#When untracking a company
 @app.route('/untrackcompany.html', methods=['POST','GET'])
 def untrackcompany():
     companyname = request.values.get('companyname')
@@ -269,11 +277,29 @@ def untrackcompany():
     tracked = []
     for i in tracked_companies:
         tracked.append(i.companyname)
+
+    notices = notification()
     
     if request.method == 'GET':
         company_id = request.values.get('companyid')
         company = Company.query.filter_by(id = company_id).first()
         stories = Story.query.filter_by(companyname=company.companyname)
-        return render_template('company.html',company=company,tracked=tracked,stories=stories)
+        return render_template('company.html',company=company,tracked=tracked,stories=stories,notices=notices)
     else:
-        return render_template('companies.html',companies=companies,tracked=tracked)
+        return render_template('companies.html',companies=companies,tracked=tracked,notices=notices)
+
+def notification():
+
+    notifications = Notification.query.filter_by(userid = session['id'])
+    notices = []
+    
+    for entry in notifications:
+        story = Story.query.filter_by(id = entry.storyid).first()
+        companyname = story.companyname
+        impact = story.impact
+        time = story.timestamp
+
+        notice = "There is a new story about " + companyname + " with an impact of " + str(impact) + " (" + time + ")"
+        notices.append(notice)
+    
+    return notices

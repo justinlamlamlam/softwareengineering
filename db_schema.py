@@ -159,5 +159,10 @@ def dbinit():
 
     db.session.add_all(storiesTEST)
 
+    stories = Story.query.all()
+
+    for i in stories:
+        db.session.add(Notification(user_id,i.id))
+
     # commit all the changes to the database file
     db.session.commit()

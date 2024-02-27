@@ -84,7 +84,7 @@ def dbinit():
         Company("Apple",2820.00,161000,"AAPL","Tim Cook"),
         Company("Microsoft",2992.91,221000,"MSFT","Satya Nadella"),
         Company("Amazon",1750.00,1525000,"AMZN","Andy Jassy"),
-        Company("Google",1801.00,156500,"GOOG","Sundar Pichai"),
+        #Company("Google",1801.00,156500,"GOOG","Sundar Pichai"), there are problems with having Google specifically as a company
         Company("Meta Platforms",1206.68,67317,"META","Mark Zuckerberg"),
 
         #Finance
@@ -153,8 +153,7 @@ def dbinit():
     db.session.add(Company_tracked(user_id,"Microsoft"))
 
     storiesTEST = [
-        Story("Apple","https://www.forbes.com/sites/davidphelan/2024/02/25/ios-174-release-date-exactly-when-apple-will-change-the-iphone-forever/","Apple Ponders Making New Wearables: AI Glasses, AirPods With Cameras, Smart Ring","2024-02-25",0.5),
-        Story("Apple","https://www.forbes.com/sites/davidphelan/2024/02/25/ios-174-release-date-exactly-when-apple-will-change-the-iphone-forever/","Apple Ponders Making New Wearables: AI Glasses, AirPods With Cameras, Smart Ring","2024-02-25",0.5)
+        Story("Tesla","https://www.wired.com/story/this-is-why-teslas-stainless-steel-cybertrucks-may-be-rusting/","2024-02-25",-0.5)
     ]
 
     db.session.add_all(storiesTEST)

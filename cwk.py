@@ -188,6 +188,8 @@ def home():
 
 def webScraper():
 
+    model = analysis.init()
+
     driver = webdriver.Firefox()
     companies = Company.query.all()
     for company in companies:
@@ -209,24 +211,36 @@ def webScraper():
 
         for result,time in zip(results,times):
             link = result.get_attribute('href')
-            headline = app.logger.info(result.text.split('\n')[1])
+            headline = result.text.split('\n')[1]
             inDB = 0
             for c in companyStories:
                 if c.url == link:
-                    app.logger.info("article already in database") 
+                    #app.logger.info("article already in database") 
                     inDB = 1
-                #if text_similarity(c.headline,headline) < 0.5:
-                #   app.logger.info("same story already in database")
-                #   inDB = 1
+                #app.logger.info(c.headline)
+                #app.logger.info(headline)
+                #app.logger.info("similarity score: ")
+                #app.logger.info(analysis.text_similarity(c.headline,headline)[0])
+                if analysis.text_similarity(c.headline,headline)[0] > 0.6:
+                   #app.logger.info("same story already in database")
+                   inDB = 1
+                #else:
+                    #app.logger.info("story not in db")
             if inDB == 0:
                 #app.logger.info("can add to db")
-                #do stuff....
-
-                #story = Story(company.companyName,link,headline,time.text,analysis(headline))
-                #db.session.add(story)
+                story = Story(company.companyname,link,headline,time.text,analysis.analyse(model,headline)[0])
+                db.session.add(story)
 
     db.session.commit()
     driver.close()
+
+    #more testting
+    #test = Story.query.filter_by(companyname="Wells Fargo")
+    #app.logger.info("All Wells Fargo Stories")
+    #for t in test:
+    #    app.logger.info(t.companyname)
+    #    app.logger.info(t.headline)
+    #    app.logger.info(t.impact)
 
 @app.route('/trackcompany.html', methods=['POST'])
 def trackcompany():

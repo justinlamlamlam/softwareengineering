@@ -8,6 +8,7 @@
     <select onchange="sortList(this.value)">
         <option value="1">Alphabetical Order</option>
         <option value="2">Tracked Companies</option>
+        <option value="3">Suggested</option>
 
     </select>
     <br><br>
@@ -113,6 +114,11 @@
                     //Makes the input into uppercase 
                     filter = input.value.toUpperCase();
                     tb = document.getElementsByName("companytable");
+                    var counter = 0;
+                    const buttons = document.getElementsByTagName("button");
+                    for (let i = 0; i < buttons.length; i++) {
+                        buttons[i].style.display = "";
+                    }
 
                     //Loops until theres no table rows left (tr)
                     for (i = 0; i < tb.length; i++) {
@@ -123,10 +129,19 @@
                         if (txtValue.toUpperCase().startsWith(filter) == true) {
                             //Shows the table values 
                             tb[i].style.display = "";
+                            counter = counter + 1;
+                            pagination("1");
 
                         } else {
                             //Hides the table values that don't match the input
                             tb[i].style.display = "none";
+                        }
+                    }
+                    
+                    //Changes how many pages there are
+                    if (counter < 6){
+                        for (let i = 0; i < buttons.length; i++) {
+                            buttons[i].style.display = "none";
                         }
                     }
                     

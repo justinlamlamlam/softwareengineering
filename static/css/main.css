@@ -126,3 +126,43 @@ td input[type="submit"]:hover {
 form {
     text-align: center;
 }
+
+.companyinfo table{
+    text-align: center;
+    margin-top: 0;
+    margin-left: 50%;
+    border-radius: 5px;
+    padding-bottom: 20px;
+    padding-top: 20px;
+    background: #bacaf8;
+    border-color: rgb(0, 57, 122);
+
+}
+
+.companyinfo p{
+    text-align: center;
+    margin-right: 30%;
+    font-size: x-large;
+    font-weight:bold;
+
+}
+
+.companyinfo b{
+
+    font-weight:bold;
+}
+
+.companyinfo form{
+    text-align: center;
+    margin-right: 30%;
+    font-size: x-large;
+    font-weight:bold;
+
+}
+
+.stories table{
+    background:#abf5ae;
+    border-color: #438845;
+    margin-left: 10%;
+    max-width:50%;
+}

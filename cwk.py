@@ -225,7 +225,7 @@ def webScraper():
                 #if text_similarity(c.headline,headline) < 0.5:
                 #   app.logger.info("same story already in database")
                 #   inDB = 1
-            if inDB == 0:
+            #if inDB == 0:
                 #app.logger.info("can add to db")
                 #do stuff....
 

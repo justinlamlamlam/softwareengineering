@@ -153,6 +153,7 @@ def dbinit():
     db.session.add(Company_tracked(user_id,"Microsoft"))
 
     storiesTEST = [
+        Story("Apple","https://www.forbes.com/sites/davidphelan/2024/02/25/ios-174-release-date-exactly-when-apple-will-change-the-iphone-forever/","Apple Ponders Making New Wearables: AI Glasses, AirPods With Cameras, Smart Ring","2024-02-25",0.5),
         Story("Apple","https://www.forbes.com/sites/davidphelan/2024/02/25/ios-174-release-date-exactly-when-apple-will-change-the-iphone-forever/","Apple Ponders Making New Wearables: AI Glasses, AirPods With Cameras, Smart Ring","2024-02-25",0.5)
     ]
 

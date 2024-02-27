@@ -178,7 +178,14 @@ def company(company_id):
     #Gets company from the company id 
     company = Company.query.filter_by(id = company_id).first()
 
-    return render_template('company.html',company=company)
+    tracked_companies = Company_tracked.query.filter_by(userid = session['id'])
+    tracked = []
+    for i in tracked_companies:
+        tracked.append(i.companyname)
+    
+    stories = Story.query.filter_by(companyname=company.companyname)
+
+    return render_template('company.html',company=company,tracked=tracked,stories=stories)
 
 #Home page
 @app.route('/home.html', methods=['POST','GET'])
@@ -218,7 +225,7 @@ def webScraper():
                 #if text_similarity(c.headline,headline) < 0.5:
                 #   app.logger.info("same story already in database")
                 #   inDB = 1
-            if inDB == 0:
+            #if inDB == 0:
                 #app.logger.info("can add to db")
                 #do stuff....
 
@@ -228,7 +235,7 @@ def webScraper():
     db.session.commit()
     driver.close()
 
-@app.route('/trackcompany.html', methods=['POST'])
+@app.route('/trackcompany.html', methods=['POST','GET'])
 def trackcompany():
     companyname = request.values.get('companyname')
 
@@ -241,9 +248,15 @@ def trackcompany():
     for i in tracked_companies:
         tracked.append(i.companyname)
     
-    return render_template('companies.html',companies=companies,tracked=tracked)
+    if request.method == 'GET':
+        company_id = request.values.get('companyid')
+        company = Company.query.filter_by(id = company_id).first()
+        stories = Story.query.filter_by(companyname=company.companyname)
+        return render_template('company.html',company=company,tracked=tracked,stories=stories)
+    else:
+        return render_template('companies.html',companies=companies,tracked=tracked)
 
-@app.route('/untrackcompany.html', methods=['POST'])
+@app.route('/untrackcompany.html', methods=['POST','GET'])
 def untrackcompany():
     companyname = request.values.get('companyname')
     query = Company_tracked.query.filter_by(userid = session['id'],companyname = companyname).first()
@@ -257,4 +270,10 @@ def untrackcompany():
     for i in tracked_companies:
         tracked.append(i.companyname)
     
-    return render_template('companies.html',companies=companies,tracked=tracked)
+    if request.method == 'GET':
+        company_id = request.values.get('companyid')
+        company = Company.query.filter_by(id = company_id).first()
+        stories = Story.query.filter_by(companyname=company.companyname)
+        return render_template('company.html',company=company,tracked=tracked,stories=stories)
+    else:
+        return render_template('companies.html',companies=companies,tracked=tracked)

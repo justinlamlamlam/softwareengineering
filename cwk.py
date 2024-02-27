@@ -42,6 +42,7 @@ from db_schema import db, dbinit, User, Company, Company_tag, Company_tracked, S
 
 # init the database so it can connect with our app
 db.init_app(app)
+analysis.init()
 
 #Adds a random 8 letter+number code as the secret key 
 characters = string.ascii_letters + string.digits
@@ -218,7 +219,7 @@ def webScraper():
                 #if text_similarity(c.headline,headline) < 0.5:
                 #   app.logger.info("same story already in database")
                 #   inDB = 1
-            if inDB == 0:
+            # if inDB == 0:
                 #app.logger.info("can add to db")
                 #do stuff....
 

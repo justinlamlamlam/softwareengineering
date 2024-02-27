@@ -23,7 +23,7 @@ from sentence_transformers import SentenceTransformer
 # Pass the output of the 'init' function for analysis()
 def init():
     model = SentenceTransformer('sentence-transformers/all-MiniLM-L6-v2')
-    checkpoint = "./model/checkpoint-1701"
+    checkpoint = "justinlamlamlam/softwareengineering"
     tokenizer = AutoTokenizer.from_pretrained(checkpoint)
     model = AutoModelForSequenceClassification.from_pretrained(checkpoint)
     return (tokenizer, model)

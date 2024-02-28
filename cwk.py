@@ -14,13 +14,7 @@ import random
 import string 
 #import numpy
 
-import analysis
-
-from selenium import webdriver
-from selenium.webdriver.common.keys import Keys
-from selenium.webdriver.common.by import By
-from selenium.webdriver.support.ui import WebDriverWait
-from selenium.webdriver.support import expected_conditions as EC
+import webScraper
 
 # create the Flask app
 from flask import Flask, render_template, request, session, redirect
@@ -66,7 +60,7 @@ def login():
 
     if request.method == 'POST':
 
-        #webScraper() #won't be called here in final version but not sure where yet
+        #webScraper.webScraper() #won't be called here in final version but not sure where yet
 
         #Gets all info from the form 
         username = request.values.get('username')
@@ -196,48 +190,6 @@ def home():
     notices = notification()
 
     return render_template('home.html',notices=notices)
-
-def webScraper():
-
-    driver = webdriver.Firefox()
-    companies = Company.query.all()
-    for company in companies:
-        driver.minimize_window()
-        url = "https://www.google.co.uk"
-        driver.get(url)
-        if driver.find_elements(By.ID,'L2AGLb'):
-            driver.find_element(By.ID,'L2AGLb').click()
-        search_input = WebDriverWait(driver,10).until(EC.visibility_of_element_located((By.NAME,"q")))
-        search_input.send_keys(company.companyname)
-        search_input.send_keys(Keys.RETURN)
-        search_input = WebDriverWait(driver,10).until(EC.visibility_of_element_located((By.LINK_TEXT,"News")))
-        driver.find_element(By.LINK_TEXT,'News').click()
-        results = driver.find_elements(By.CLASS_NAME,'WlydOe')
-
-        times = driver.find_elements(By.XPATH,"//div[@class='OSrXXb rbYSKb LfVVr']")
-
-        companyStories = Story.query.filter_by(companyname=company.companyname)
-
-        for result,time in zip(results,times):
-            link = result.get_attribute('href')
-            headline = app.logger.info(result.text.split('\n')[1])
-            inDB = 0
-            for c in companyStories:
-                if c.url == link:
-                    app.logger.info("article already in database") 
-                    inDB = 1
-                #if text_similarity(c.headline,headline) < 0.5:
-                #   app.logger.info("same story already in database")
-                #   inDB = 1
-            #if inDB == 0:
-                #app.logger.info("can add to db")
-                #do stuff....
-
-                #story = Story(company.companyName,link,headline,time.text,analysis(headline))
-                #db.session.add(story)
-
-    db.session.commit()
-    driver.close()
 
 #When tracking a company
 @app.route('/trackcompany.html', methods=['POST','GET'])

@@ -13,8 +13,11 @@ from barcode.writer import SVGWriter
 import random 
 import string 
 #import numpy
+from jinja2 import Template
+from datetime import datetime
 
 import webScraper
+import stock
 
 # create the Flask app
 from flask import Flask, render_template, request, session, redirect
@@ -181,7 +184,10 @@ def company(company_id):
     stories = Story.query.filter_by(companyname=company.companyname)
     notices = notification()
 
-    return render_template('company.html',company=company,tracked=tracked,stories=stories,notices=notices)
+    today_date = datetime.today().strftime('%Y-%m-%d')
+    fig = stock.get_stock_fig(company.stock_symb, specific_dates_range=("2024-01-01", today_date), stories=stories)
+
+    return render_template('company.html',company=company,tracked=tracked,stories=stories,notices=notices, fig=fig.to_html(full_html=False))
 
 #Home page
 @app.route('/home.html', methods=['POST','GET'])

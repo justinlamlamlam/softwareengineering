@@ -12,6 +12,7 @@ from barcode import EAN13
 from barcode.writer import SVGWriter
 import random 
 import string 
+from datetime import datetime
 #import numpy
 from jinja2 import Template
 from datetime import datetime
@@ -63,7 +64,7 @@ def login():
 
     if request.method == 'POST':
 
-        #webScraper.webScraper() #won't be called here in final version but not sure where yet
+        webScraper.webScraper() #won't be called here in final version but not sure where yet
 
         #Gets all info from the form 
         username = request.values.get('username')
@@ -255,7 +256,13 @@ def notification():
         story = Story.query.filter_by(id = entry.storyid).first()
         companyname = story.companyname
         impact = story.impact
-        time = story.timestamp
+        date = datetime.strptime(story.timestamp, '%Y-%m-%d')
+        if date.day == datetime.now().day:
+            time = "Today"
+        else:
+            time = str(datetime.now() - date)
+            time = time[:time.find(",")] + " days ago"
+
 
         notice = "There is a new story about " + companyname + " with an impact of " + str(impact) + " (" + time + ")"
         notices.append(notice)

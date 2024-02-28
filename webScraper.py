@@ -10,6 +10,15 @@ from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 
 from db_schema import db, dbinit, User, Company, Company_tag, Company_tracked, Story, Notification
+from flask_mail import Mail, Message
+
+from flask import Flask, render_template, request, session, redirect
+app = Flask(__name__)
+mail = Mail(app)
+
+from datetime import datetime
+from dateutil.relativedelta import relativedelta
+import re 
 
 def webScraper():
 
@@ -53,8 +62,20 @@ def webScraper():
                     #app.logger.info("story not in db")
             if inDB == 0:
                 #app.logger.info("can add to db")
-                story = Story(company.companyname,link,headline,time.text,analysis.analyse(model,headline)[0])
+                date = datetime.now()
+
+                if "hours ago" in time.text:
+                    date = date - relativedelta(hours=int(time.text[0:2]))
+                elif "days ago" in time.text:
+                    date = date - relativedelta(days=int(time.text[0:2]))
+                elif "months ago" in time.text:
+                    date = date - relativedelta(months=int(time.text[0:2]))
+
+                date = date.strftime('%Y-%m-%d')
+
+                story = Story(company.companyname,link,headline,date,analysis.analyse(model,headline)[0])
                 db.session.add(story)
+                check_story(story)
 
     db.session.commit()
     driver.close()
@@ -66,3 +87,35 @@ def webScraper():
     #    app.logger.info(t.companyname)
     #    app.logger.info(t.headline)
     #    app.logger.info(t.impact)
+
+def check_story(story):
+
+    if story.impact > 0.5 or story.impact < -0.5:
+
+        companyname = story.companyname
+
+        company_tracked = Company_tracked.query.filter_by(companyname=companyname)
+
+        users = []
+
+        for i in company_tracked:
+            users.append(i.userid)
+        
+        for user_id in users:
+
+            useremail = User.query.filter_by(id=user_id).first().email
+ 
+            msg = Message("Important Notice",
+                    sender=("MarketMood","u2200657@live.warwick.ac.uk"),
+                    body=("The company you tracked: " + companyname.upper() + " has a new story that could have a major impact on it, go on MarketMood to see more details."),
+                    #recipients=['u2200657@live.warwick.ac.uk'])
+                    recipients=[useremail]) #This would be the actual code
+
+            #mail.send(msg) #sends the mail PLEASE CHANGE THE EMAIL IN THE DATABSE FIRST
+
+            notification = Notification(user_id,story.id)
+            db.session.add(notification)
+
+            db.session.commit()
+        
+        

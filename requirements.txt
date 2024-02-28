@@ -9,3 +9,4 @@ SQLAlchemy==1.4.46
 Werkzeug==2.0.3
 WTForms==3.0.0
 selenium==4.18.1
+python-dateutil==2.4.1

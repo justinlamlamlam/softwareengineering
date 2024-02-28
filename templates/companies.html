@@ -62,12 +62,12 @@
         {% endfor %}
 
         <div class="pagination">
-            <button onclick="pagination('1')">&laquo;</button>
-            <button id="button1" class="active" onclick="pagination('1')">1</button>
-            <button id="button2" onclick="pagination('2')">2</button>
-            <button id="button3" onclick="pagination('3')">3</button>
-            <button id="button4" onclick="pagination('4')">4</button>
-            <button onclick="pagination('4')">&raquo;</button>
+            <button class="pagebutton" onclick="pagination('1')">&laquo;</button>
+            <button class="pagebutton" id="button1" class="active" onclick="pagination('1')">1</button>
+            <button class="pagebutton" id="button2" onclick="pagination('2')">2</button>
+            <button class="pagebutton" id="button3" onclick="pagination('3')">3</button>
+            <button class="pagebutton" id="button4" onclick="pagination('4')">4</button>
+            <button class="pagebutton" onclick="pagination('4')">&raquo;</button>
           </div>
 
           
@@ -82,7 +82,7 @@
     
                 const pageNumber = parseInt(number);
     
-                const buttons = document.getElementsByTagName("button");
+                const buttons = document.getElementsByClassName("pagebutton");
                 const tables = document.getElementsByTagName("table");
     
                 // Loop through all buttons to remove 'active' class
@@ -103,7 +103,7 @@
                 //document.getElementById(number).style.display = "";
     
                 // Add 'active' class to the clicked button
-                buttons[pageNumber+1].classList.add('active');
+                buttons[pageNumber].classList.add('active');
                         
             }
 
@@ -116,7 +116,7 @@
                     filter = input.value.toUpperCase();
                     tb = document.getElementsByName("companytable");
                     var counter = 0;
-                    const buttons = document.getElementsByTagName("button");
+                    const buttons = document.getElementsByClassName("pagebutton");
                     for (let i = 0; i < buttons.length; i++) {
                         buttons[i].style.display = "";
                     }
@@ -131,7 +131,7 @@
                             //Shows the table values 
                             tb[i].style.display = "";
                             counter = counter + 1;
-                            pagination("1");
+                            //pagination("1");
 
                         } else {
                             //Hides the table values that don't match the input
@@ -144,6 +144,9 @@
                         for (let i = 0; i < buttons.length; i++) {
                             buttons[i].style.display = "none";
                         }
+                    }
+                    else{
+                        pagination("1");
                     }
                     
                 }

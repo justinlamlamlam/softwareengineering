@@ -104,7 +104,7 @@ def dbinit():
 
         #Industrial
         Company("Boeing",122.98,170000,"0BOE","Dave Calhoun"),
-        Company("Caterpillar Inc.",158.17,113200,"CAT","Jim Umpleby"),
+        Company("Caterpillar Inc",158.17,113200,"CAT","Jim Umpleby"),
 
         #Indsutrial and tech
         Company("Tesla",636.80,140000,"TSLA","Elon Musk"),
@@ -132,7 +132,7 @@ def dbinit():
         Company_tag("Johnson & Johnson","Health care"),
         Company_tag("Pfizer","Health care"),
         Company_tag("Boeing","Industrial"),
-        Company_tag("Caterpillar Inc.","Industrial"),
+        Company_tag("Caterpillar Inc","Industrial"),
         Company_tag("Tesla","Industrial"),
         Company_tag("Tesla","Technology"),
         Company_tag("Samsung Electronics","Technology"),

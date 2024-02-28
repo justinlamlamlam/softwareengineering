@@ -68,7 +68,7 @@ def webScraper():
                     date = date - relativedelta(hours=int(time.text[0:2]))
                 elif "days ago" in time.text:
                     date = date - relativedelta(days=int(time.text[0:2]))
-                elif "months go" in time.text:
+                elif "months ago" in time.text:
                     date = date - relativedelta(months=int(time.text[0:2]))
 
                 date = date.strftime('%Y-%m-%d')

@@ -1,11 +1,115 @@
 {% extends "layout.html" %}
 {% block content %}
 
-<div class="center">
 
-    <p>{{company.companyname}}</p>
 
-</div>
+    <div class="companyinfo">
+
+        <img src="static/logos/{{company.companyname}}" height = "150px" weight = "150px" onerror="this.onerror=null;style='display: none;'"/>
+        <p>{{company.companyname}}</p>
+
+        {% if company.companyname in tracked %}
+
+                <form action="untrackcompany.html" method="GET" onsubmit="untrack()">
+                    <input type="hidden" name="companyname" value="{{company.companyname}}">
+                    <input type="hidden" name="companyid" value="{{company.id}}">
+                    <input type="submit" value="Untrack" style="color: rgb(233, 136, 136);">
+                </form>
+
+                {% else %}
+
+                <form action="trackcompany.html" method="GET">
+                    <input type="hidden" name="companyname" value="{{company.companyname}}">
+                    <input type="hidden" name="companyid" value="{{company.id}}">
+                    <input type="submit" value="Track">
+                </form>
+
+        {% endif %}    
+        <br><br>
+
+        {{ fig|safe }}
+        
+        <table>
+            <tbody>
+            <tr><td><b>Current Net Worth:</b> {{company.networth}}B</td></tr>
+            <tr><td><b>Current No. Employees:</b> {{company.num_emp}}</td></tr>
+            <tr><td><b>Stock Symbol:</b> {{company.stock_symb}}</td></tr>
+            <tr><td><b>CEO:</b> {{company.ceoname}}</td></tr>
+        </tbody>
+        </table>
+
+        <a>Latest Stories From {{company.companyname}}...</a>
+        <br><br>
+
+        {% for story in stories%}
+        <div class="stories">
+            <table>
+                <tbody>
+                    <tr><td><b>{{story.headline}}</b></td></tr>
+                    <tr><td><a href="{{story.url}}" target="_blank">Source</a></td></tr>
+                    
+                    <tr><td>Date: {{story.timestamp}}</td></tr>
+                    <tr><td>Possible Impact of Story on {{story.companyname}}: {{story.impact}}</td></tr>
+                </tbody>
+                
+                <br><br>
+            </table>
+        </div>
+            
+        {% endfor %}
+
+
+        <script>
+            function untrack(){
+                    let text = "By clicking OK you will no longer be tracking the company";
+                    if (confirm(text) != true){
+                        event.preventDefault()
+                    }
+                }
+        </script>
+        
+    </div>
+    
+
+    <div class="notification">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <b>Notices:</b><br><br>
+            {% for entry in notices %}
+                -{{entry}}
+                <br><br>
+            {% endfor %}
+        </div>
+    </div>
+    
+    <script>
+    
+        var modal = document.getElementsByClassName("notification")[0];
+        // Get the button that opens the modal
+        var btn = document.getElementById("notibutton");
+        // Get the <span> element that closes the modal
+        var span = document.getElementsByClassName("close")[0];
+    
+        // When the user clicks the button, open the modal 
+        btn.onclick = function() {
+            modal.style.display = "block";
+        }
+    
+        // When the user clicks on <span> (x), close the modal
+        span.onclick = function() {
+            modal.style.display = "none";
+        }
+    
+        // When the user clicks anywhere outside of the modal, close it
+        window.onclick = function(event) {
+        if (event.target == modal) {
+            modal.style.display = "none";
+        }
+        }
+    
+    </script>
+
+
 
 
 {% endblock %}

@@ -8,7 +8,7 @@ if ! grep -q FLASK_RUN_PORT ".env" 2>/dev/null; then
     echo FLASK_DEBUG=True >.env
     echo FLASK_RUN_PORT=$portnum >> .env
 fi
-
+python -m pip install -r requirements.txt
 # add virtual environment if it doesn't already exist
 if ! [[ -d vcwk ]]; then
     echo Adding virtual environment 
@@ -35,3 +35,4 @@ source vcwk/bin/activate
 
 # run Flask for cwk
 ./run.sh cwk
+$SHELL

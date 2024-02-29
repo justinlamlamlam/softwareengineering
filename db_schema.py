@@ -104,7 +104,7 @@ def dbinit():
 
         #Industrial
         Company("Boeing",122.98,170000,"0BOE","Dave Calhoun"),
-        Company("Caterpillar Inc.",158.17,113200,"CAT","Jim Umpleby"),
+        Company("Caterpillar Inc",158.17,113200,"CAT","Jim Umpleby"),
 
         #Indsutrial and tech
         Company("Tesla",636.80,140000,"TSLA","Elon Musk"),
@@ -132,7 +132,7 @@ def dbinit():
         Company_tag("Johnson & Johnson","Health care"),
         Company_tag("Pfizer","Health care"),
         Company_tag("Boeing","Industrial"),
-        Company_tag("Caterpillar Inc.","Industrial"),
+        Company_tag("Caterpillar Inc","Industrial"),
         Company_tag("Tesla","Industrial"),
         Company_tag("Tesla","Technology"),
         Company_tag("Samsung Electronics","Technology"),
@@ -145,7 +145,10 @@ def dbinit():
     db.session.add_all(all_tags)
 
     hashed_password = security.generate_password_hash("123")
-    db.session.add(User("Test","jiaboj08@gmail.com",hashed_password))
+
+    ########################################################
+    #CHANGE THE EMAIL BEFORE USING THE WEBSITE 
+    db.session.add(User("Test","u2200657@live.warwick.ac.uk",hashed_password))
 
     user_id = User.query.filter_by(username="Test").first().id
     
@@ -153,10 +156,16 @@ def dbinit():
     db.session.add(Company_tracked(user_id,"Microsoft"))
 
     storiesTEST = [
+        Story("Apple","https://www.forbes.com/sites/davidphelan/2024/02/25/ios-174-release-date-exactly-when-apple-will-change-the-iphone-forever/","Apple Ponders Making New Wearables: AI Glasses, AirPods With Cameras, Smart Ring","2024-02-25",0.5),
         Story("Apple","https://www.forbes.com/sites/davidphelan/2024/02/25/ios-174-release-date-exactly-when-apple-will-change-the-iphone-forever/","Apple Ponders Making New Wearables: AI Glasses, AirPods With Cameras, Smart Ring","2024-02-25",0.5)
     ]
 
-    db.session.add_all(storiesTEST)
+    #db.session.add_all(storiesTEST)
+
+    stories = Story.query.all()
+
+    #for i in stories:
+        #db.session.add(Notification(user_id,i.id))
 
     # commit all the changes to the database file
     db.session.commit()

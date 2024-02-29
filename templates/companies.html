@@ -8,6 +8,7 @@
     <select onchange="sortList(this.value)">
         <option value="1">Alphabetical Order</option>
         <option value="2">Tracked Companies</option>
+        <option value="3">Suggested</option>
 
     </select>
     <br><br>
@@ -61,13 +62,14 @@
         {% endfor %}
 
         <div class="pagination">
-            <button onclick="pagination('1')">&laquo;</button>
-            <button id="button1" class="active" onclick="pagination('1')">1</button>
-            <button id="button2" onclick="pagination('2')">2</button>
-            <button id="button3" onclick="pagination('3')">3</button>
-            <button id="button4" onclick="pagination('4')">4</button>
-            <button onclick="pagination('4')">&raquo;</button>
+            <button class="pagebutton" onclick="pagination('1')">&laquo;</button>
+            <button class="pagebutton" id="button1" class="active" onclick="pagination('1')">1</button>
+            <button class="pagebutton" id="button2" onclick="pagination('2')">2</button>
+            <button class="pagebutton" id="button3" onclick="pagination('3')">3</button>
+            <button class="pagebutton" id="button4" onclick="pagination('4')">4</button>
+            <button class="pagebutton" onclick="pagination('4')">&raquo;</button>
           </div>
+
           
         <script>
             
@@ -80,7 +82,7 @@
     
                 const pageNumber = parseInt(number);
     
-                const buttons = document.getElementsByTagName("button");
+                const buttons = document.getElementsByClassName("pagebutton");
                 const tables = document.getElementsByTagName("table");
     
                 // Loop through all buttons to remove 'active' class
@@ -113,6 +115,11 @@
                     //Makes the input into uppercase 
                     filter = input.value.toUpperCase();
                     tb = document.getElementsByName("companytable");
+                    var counter = 0;
+                    const buttons = document.getElementsByClassName("pagebutton");
+                    for (let i = 0; i < buttons.length; i++) {
+                        buttons[i].style.display = "";
+                    }
 
                     //Loops until theres no table rows left (tr)
                     for (i = 0; i < tb.length; i++) {
@@ -123,11 +130,23 @@
                         if (txtValue.toUpperCase().startsWith(filter) == true) {
                             //Shows the table values 
                             tb[i].style.display = "";
+                            counter = counter + 1;
+                            //pagination("1");
 
                         } else {
                             //Hides the table values that don't match the input
                             tb[i].style.display = "none";
                         }
+                    }
+                    
+                    //Changes how many pages there are
+                    if (counter < 6){
+                        for (let i = 0; i < buttons.length; i++) {
+                            buttons[i].style.display = "none";
+                        }
+                    }
+                    else{
+                        pagination("1");
                     }
                     
                 }
@@ -222,6 +241,44 @@
 </div>
 
 
+
+<div class="notification">
+    <div class="modal-content">
+        <span class="close">&times;</span>
+        <b>Notices:</b><br><br>
+        {% for entry in notices %}
+            -{{entry}}
+            <br><br>
+        {% endfor %}
+    </div>
+</div>
+
+<script>
+
+    var modal = document.getElementsByClassName("notification")[0];
+    // Get the button that opens the modal
+    var btn = document.getElementById("notibutton");
+    // Get the <span> element that closes the modal
+    var span = document.getElementsByClassName("close")[0];
+
+    // When the user clicks the button, open the modal 
+    btn.onclick = function() {
+        modal.style.display = "block";
+    }
+
+    // When the user clicks on <span> (x), close the modal
+    span.onclick = function() {
+        modal.style.display = "none";
+    }
+
+    // When the user clicks anywhere outside of the modal, close it
+    window.onclick = function(event) {
+    if (event.target == modal) {
+        modal.style.display = "none";
+    }
+    }
+
+</script>
 
 
 {% endblock %}

@@ -14,7 +14,7 @@ Testing789
 
 PROCESS OF PULLING:
 
-git pull origin branch_name
+git pull origin main
 
 PROCESS OF CHANGING STUFF:
 

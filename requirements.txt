@@ -11,4 +11,5 @@ WTForms==3.0.0
 selenium==4.18.1
 plotly
 jinja2
+alpha_vantage
 python-dateutil==2.4.1

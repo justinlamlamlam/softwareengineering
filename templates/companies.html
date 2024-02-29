@@ -4,6 +4,7 @@
 <div class="center">
 
     <input type="text" id="searchbar" onkeyup="searchbar()" placeholder="Search for companies...">
+    
     <c>Sort by</c>
     <select onchange="sortList(this.value)">
         <option value="1">Alphabetical Order</option>
@@ -74,8 +75,8 @@
         <script>
             
             window.onload=function(){
-                pagination("1");
                 sortList(1);
+                pagination("1");
             }
 
             function pagination(number){
@@ -208,6 +209,7 @@
                             // Loop through all list-items:
                             for (i = 0; i < (b.length - 1); i++) {
                                 // start by saying there should be no switching:
+                                //b.style.display = "";
                                 shouldSwitch = false;
                                 /* check if the next item should
                                 switch place with the current item: */
@@ -230,8 +232,11 @@
                                 b[i].parentNode.insertBefore(b[i + 1], b[i]);
                                 switching = true;
                             }
+
                         }
                     }
+
+                    pagination("1");
 
                     
                 }

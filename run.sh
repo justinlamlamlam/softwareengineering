@@ -10,7 +10,7 @@ if [[ -z $app ]]; then
     app=cwk
 fi
 
-# activate the virtual environment for the lab
+# activate the virtual environment
 source vcwk/bin/activate
 
 # run Flask for lab1

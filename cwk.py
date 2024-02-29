@@ -29,12 +29,6 @@ mail = Mail(app)
 app.config['SQLALCHEMY_DATABASE_URI'] = f'sqlite:///database.sqlite'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
-#Sets the routes to the folders where the barcodes and event images are stored
-#BARCODE_FOLDER = 'static/barcode'
-#app.config['BARCODE_FOLDER'] = BARCODE_FOLDER
-#EVENT_FOLDER = 'static/event'
-#app.config['EVENT_FOLDER'] = EVENT_FOLDER
-
 # set up a 'model' for the data 
 from db_schema import db, dbinit, User, Company, Company_tag, Company_tracked, Story, Notification
 
@@ -48,7 +42,7 @@ app.secret_key = code
 
 
 # change this to False to avoid resetting the database every time this app is restarted
-resetdb = True
+resetdb = False
 if resetdb:
     with app.app_context():
         # drop everything, create all the tables, then put some data into the tables
@@ -64,7 +58,7 @@ def login():
 
     if request.method == 'POST':
 
-        webScraper.webScraper() #won't be called here in final version but not sure where yet
+        #webScraper.webScraper() #won't be called here in final version but not sure where yet
 
         #Gets all info from the form 
         username = request.values.get('username')
@@ -184,11 +178,12 @@ def company(company_id):
     
     stories = Story.query.filter_by(companyname=company.companyname)
     notices = notification()
+    reputation = current_reputation(company.companyname)
 
     today_date = datetime.today().strftime('%Y-%m-%d')
     fig = stock.get_stock_fig(company.stock_symb, specific_dates_range=("2024-01-01", today_date), stories=stories)
 
-    return render_template('company.html',company=company,tracked=tracked,stories=stories,notices=notices, fig=fig.to_html(full_html=False))
+    return render_template('company.html',company=company,tracked=tracked,stories=stories,notices=notices, reputation=reputation,fig=fig.to_html(full_html=False))
 
 #Home page
 @app.route('/home.html', methods=['POST','GET'])
@@ -218,7 +213,13 @@ def trackcompany():
         company_id = request.values.get('companyid')
         company = Company.query.filter_by(id = company_id).first()
         stories = Story.query.filter_by(companyname=company.companyname)
-        return render_template('company.html',company=company,tracked=tracked,stories=stories,notices=notices)
+        reputation = current_reputation(company.companyname)
+
+        today_date = datetime.today().strftime('%Y-%m-%d')
+        fig = stock.get_stock_fig(company.stock_symb, specific_dates_range=("2024-01-01", today_date), stories=stories)
+
+        return render_template('company.html',company=company,tracked=tracked,stories=stories,notices=notices, reputation=reputation,fig=fig.to_html(full_html=False))
+
     else:
         return render_template('companies.html',companies=companies,tracked=tracked,notices=notices)
 
@@ -243,10 +244,16 @@ def untrackcompany():
         company_id = request.values.get('companyid')
         company = Company.query.filter_by(id = company_id).first()
         stories = Story.query.filter_by(companyname=company.companyname)
-        return render_template('company.html',company=company,tracked=tracked,stories=stories,notices=notices)
+        reputation = current_reputation(company.companyname)
+
+        today_date = datetime.today().strftime('%Y-%m-%d')
+        fig = stock.get_stock_fig(company.stock_symb, specific_dates_range=("2024-01-01", today_date), stories=stories)
+
+        return render_template('company.html',company=company,tracked=tracked,stories=stories,notices=notices, reputation=reputation, fig=fig.to_html(full_html=False))
     else:
         return render_template('companies.html',companies=companies,tracked=tracked,notices=notices)
 
+#Function to retrieve all notifications from database
 def notification():
 
     notifications = Notification.query.filter_by(userid = session['id'])
@@ -261,10 +268,25 @@ def notification():
             time = "Today"
         else:
             time = str(datetime.now() - date)
-            time = time[:time.find(",")] + " days ago"
+            time = time[:time.find(",")] + " ago"
 
 
         notice = "There is a new story about " + companyname + " with an impact of " + str(impact) + " (" + time + ")"
         notices.append(notice)
     
     return notices
+
+#Function to get current public opinion on company
+def current_reputation(companyname):
+
+    stories = Story.query.filter_by(companyname=companyname)
+    reputation = 0
+    counter = 0
+
+    for i in stories:
+        reputation = reputation + i.impact
+        counter+=1
+    
+    reputation = reputation/counter
+
+    return reputation

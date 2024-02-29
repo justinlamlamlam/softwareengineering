@@ -26,6 +26,8 @@
 
         {% endif %}    
         <br><br>
+
+        {{ fig|safe }}
         
         <table>
             <tbody>
@@ -46,7 +48,7 @@
                     <tr><td><b>{{story.headline}}</b></td></tr>
                     <tr><td><a href="{{story.url}}" target="_blank">Source</a></td></tr>
                     
-                    <tr><td>{{story.timestamp}}</td></tr>
+                    <tr><td>Date: {{story.timestamp}}</td></tr>
                     <tr><td>Possible Impact of Story on {{story.companyname}}: {{story.impact}}</td></tr>
                 </tbody>
                 

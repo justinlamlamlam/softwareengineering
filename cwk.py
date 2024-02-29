@@ -12,9 +12,13 @@ from barcode import EAN13
 from barcode.writer import SVGWriter
 import random 
 import string 
+from datetime import datetime
 #import numpy
+from jinja2 import Template
+from datetime import datetime
 
 import webScraper
+import stock
 
 # create the Flask app
 from flask import Flask, render_template, request, session, redirect
@@ -60,7 +64,7 @@ def login():
 
     if request.method == 'POST':
 
-        #webScraper.webScraper() #won't be called here in final version but not sure where yet
+        webScraper.webScraper() #won't be called here in final version but not sure where yet
 
         #Gets all info from the form 
         username = request.values.get('username')
@@ -181,7 +185,10 @@ def company(company_id):
     stories = Story.query.filter_by(companyname=company.companyname)
     notices = notification()
 
-    return render_template('company.html',company=company,tracked=tracked,stories=stories,notices=notices)
+    today_date = datetime.today().strftime('%Y-%m-%d')
+    fig = stock.get_stock_fig(company.stock_symb, specific_dates_range=("2024-01-01", today_date), stories=stories)
+
+    return render_template('company.html',company=company,tracked=tracked,stories=stories,notices=notices, fig=fig.to_html(full_html=False))
 
 #Home page
 @app.route('/home.html', methods=['POST','GET'])
@@ -249,7 +256,13 @@ def notification():
         story = Story.query.filter_by(id = entry.storyid).first()
         companyname = story.companyname
         impact = story.impact
-        time = story.timestamp
+        date = datetime.strptime(story.timestamp, '%Y-%m-%d')
+        if date.day == datetime.now().day:
+            time = "Today"
+        else:
+            time = str(datetime.now() - date)
+            time = time[:time.find(",")] + " days ago"
+
 
         notice = "There is a new story about " + companyname + " with an impact of " + str(impact) + " (" + time + ")"
         notices.append(notice)

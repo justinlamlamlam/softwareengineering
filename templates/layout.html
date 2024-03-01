@@ -11,13 +11,18 @@ charset="utf-8">
     <body>
 
         <ul>
-            <li><a style="padding:0; padding-left: 10px; padding-right: 10px;" href="home.html"><img src="static/home.png" height = "40px" weight = "40px"/></a></li>
-            <li><a href="home.html">Home</a></li>
+            <div class="hover-text">
+                <li><a style="padding-left: 50px; padding-right: 50px; display:contents;" href="home.html"><img src="static/home.png" height = "40px" weight = "40px" style="margin-left: 20px; margin-right: 20px;"/></a></li>
+                <span class="tooltip-text" style="left: 25px;">Home</span>
+            </div>
+            <li><a href="home.html" style="margin-left: 10px;">Home</a></li>
             
             <li><a href="companies.html">Companies</a></li>
             <li><a href="logout.html">LogOut</a></li>
-            <li><d style="padding:0; padding-left:20px; padding-right: 10px; right: 0;"><button id="notibutton"><img src="static/bell.png" height="40px" width="40px"></button></d></li>
-
+            <div class="hover-text">
+                <li><d style="padding:0; padding-left:20px; padding-right: 10px; right: 0;"><button id="notibutton" style="cursor: pointer;"><img src="static/bell.png" height="40px" width="40px"></button></d></li>
+                <span class="tooltip-text">Notices</span>
+            </div>
         </ul>
 
         

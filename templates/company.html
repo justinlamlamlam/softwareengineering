@@ -26,8 +26,6 @@
 
         {% endif %}    
         <br><br>
-
-        {{ fig|safe }}
         
         <table>
             <tbody>
@@ -35,15 +33,19 @@
             <tr><td><b>Current No. Employees:</b> {{company.num_emp}}</td></tr>
             <tr><td><b>Stock Symbol:</b> {{company.stock_symb}}</td></tr>
             <tr><td><b>CEO:</b> {{company.ceoname}}</td></tr>
-            <tr><td><b>Current reputation:</b> {{reputation}}</td></tr>
+            <tr><td><b>Current reputation:</b> {{reputation}} (from -1 to 1)</td></tr>
         </tbody>
         </table>
 
-        <a>Latest Stories From {{company.companyname}}...</a>
+        Current stock prices
+        {{ fig|safe }}
+
+        <a>Latest Stories From {{company.companyname}}... (The impact of each story is ranked from -1 to 1 with -1 being strongly negatively and 1 being strongly positively)</a>
         <br><br>
 
-        {% for story in stories%}
+        
         <div class="stories">
+            {% for story in stories%}
             <table>
                 <tbody>
                     <tr><td><b>{{story.headline}}</b></td></tr>
@@ -55,18 +57,26 @@
                 
                 <br><br>
             </table>
+            {% endfor %}
+
+            {% if seemore %}
+            <form class="seemore" action="company{{company.id}}.html" method="POST"> 
+                <input id="seemorebutton" type="submit" value="See more">
+            </form>
+            {% endif %}
         </div>
             
-        {% endfor %}
+        
 
 
         <script>
             function untrack(){
-                    let text = "By clicking OK you will no longer be tracking the company";
-                    if (confirm(text) != true){
-                        event.preventDefault()
+                let text = "By clicking OK you will no longer be tracking the company";
+                if (confirm(text) != true){
+                    event.preventDefault()
                     }
-                }
+            }
+            
         </script>
         
     </div>

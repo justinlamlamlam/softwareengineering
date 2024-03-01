@@ -4,7 +4,7 @@
 <div class="center">
 
     <input type="text" id="searchbar" onkeyup="searchbar()" placeholder="Search for companies...">
-    
+
     <c>Sort by</c>
     <select onchange="sortList(this.value)">
         <option value="1">Alphabetical Order</option>
@@ -20,17 +20,13 @@
             <tr>
 
                 <d><th width='200px'><a href="company{{entry.id}}.html" style="font-size: 25px;"><br><br>{{entry.companyname}}</a></th></d>
+                <b id="hiddencompanyname" style="display: none;">{{entry.companyname}}</b>
 
             </tr>
         </thead>
         <tbody>
 
-            <tr>
-                <td>Networth: {{entry.networth}}</td>
-                <td>Number of Employees: {{entry.num_emp}}</td>
-                <td>Stock Symbol: {{entry.stock_symb}}</td>
-                <td><br><br><br><br></td>
-            </tr>
+
 
             <tr style="width:10px; height:10px; overflow: hidden;text-overflow: ellipsis;">
                 <td>CEO: {{entry.ceoname}}</td>

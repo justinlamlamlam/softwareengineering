@@ -16,6 +16,7 @@ from datetime import datetime
 #import numpy
 from jinja2 import Template
 from datetime import datetime
+import math
 
 import webScraper
 import stock
@@ -177,21 +178,55 @@ def company(company_id):
         tracked.append(i.companyname)
     
     stories = Story.query.filter_by(companyname=company.companyname)
+    stories_sorted = []
+
+    for i in stories:
+        stories_sorted.append(i)
+    
+    stories_sorted.sort(key=sort_story_bydate,reverse=True)
+
+    if request.method != "POST":
+        stories_sorted = stories_sorted[:5]
+    
+    seemore = True
+    if request.method == "POST":
+        seemore = False
+
     notices = notification()
     reputation = current_reputation(company.companyname)
 
     today_date = datetime.today().strftime('%Y-%m-%d')
     fig = stock.get_stock_fig(company.stock_symb, specific_dates_range=("2024-01-01", today_date), stories=stories)
 
-    return render_template('company.html',company=company,tracked=tracked,stories=stories,notices=notices, reputation=reputation,fig=fig.to_html(full_html=False))
+    return render_template('company.html',company=company,tracked=tracked,stories=stories_sorted,notices=notices, reputation=reputation,fig=fig.to_html(full_html=False),seemore=seemore)
 
 #Home page
 @app.route('/home.html', methods=['POST','GET'])
 def home():
     
     notices = notification()
+    companies_tracked = Company_tracked.query.filter_by(userid = session['id'])
 
-    return render_template('home.html',notices=notices)
+    stories = []
+
+    for i in companies_tracked:
+
+        story = Story.query.filter_by(companyname=i.companyname)
+        for entry in story:
+            stories.append(entry)
+
+    stories.sort(key=sort_story_bydate,reverse=True)
+    
+    stories = stories[:5]
+
+    return render_template('home.html',notices=notices,stories=stories)
+
+#Function to help sort story by date
+def sort_story_bydate(story):
+
+    date = datetime.strptime(story.timestamp, '%Y-%m-%d')
+
+    return date
 
 #When tracking a company
 @app.route('/trackcompany.html', methods=['POST','GET'])
@@ -201,27 +236,13 @@ def trackcompany():
     db.session.add(Company_tracked(session['id'],companyname))
     db.session.commit()
 
-    companies = Company.query.all()
-    tracked_companies = Company_tracked.query.filter_by(userid = session['id'])
-    tracked = []
-    for i in tracked_companies:
-        tracked.append(i.companyname)
-    
-    notices = notification()
-
     if request.method == 'GET':
         company_id = request.values.get('companyid')
-        company = Company.query.filter_by(id = company_id).first()
-        stories = Story.query.filter_by(companyname=company.companyname)
-        reputation = current_reputation(company.companyname)
-
-        today_date = datetime.today().strftime('%Y-%m-%d')
-        fig = stock.get_stock_fig(company.stock_symb, specific_dates_range=("2024-01-01", today_date), stories=stories)
-
-        return render_template('company.html',company=company,tracked=tracked,stories=stories,notices=notices, reputation=reputation,fig=fig.to_html(full_html=False))
+        
+        return company(company_id)
 
     else:
-        return render_template('companies.html',companies=companies,tracked=tracked,notices=notices)
+        return companies()
 
 #When untracking a company
 @app.route('/untrackcompany.html', methods=['POST','GET'])
@@ -232,26 +253,13 @@ def untrackcompany():
     db.session.delete(query)
     db.session.commit()
 
-    companies = Company.query.all()
-    tracked_companies = Company_tracked.query.filter_by(userid = session['id'])
-    tracked = []
-    for i in tracked_companies:
-        tracked.append(i.companyname)
-
-    notices = notification()
-    
     if request.method == 'GET':
         company_id = request.values.get('companyid')
-        company = Company.query.filter_by(id = company_id).first()
-        stories = Story.query.filter_by(companyname=company.companyname)
-        reputation = current_reputation(company.companyname)
+        
+        return company(company_id)
 
-        today_date = datetime.today().strftime('%Y-%m-%d')
-        fig = stock.get_stock_fig(company.stock_symb, specific_dates_range=("2024-01-01", today_date), stories=stories)
-
-        return render_template('company.html',company=company,tracked=tracked,stories=stories,notices=notices, reputation=reputation, fig=fig.to_html(full_html=False))
     else:
-        return render_template('companies.html',companies=companies,tracked=tracked,notices=notices)
+        return companies()
 
 #Function to retrieve all notifications from database
 def notification():
@@ -281,12 +289,20 @@ def current_reputation(companyname):
 
     stories = Story.query.filter_by(companyname=companyname)
     reputation = 0
+    #lamba is the rate of decay, the higher the faster, meaning new stories will have higher impact on reputation
+    lambda_value = 0.01
     counter = 0
 
+
     for i in stories:
-        reputation = reputation + i.impact
+        date = datetime.strptime(i.timestamp, '%Y-%m-%d')
+        days_ago = (datetime.now() - date).days
+
+        #Exponential decay function to take in the factor of how recent the stories are
+        reputation = reputation + (i.impact * math.exp(-lambda_value * days_ago))
         counter+=1
     
     reputation = reputation/counter
+
 
     return reputation

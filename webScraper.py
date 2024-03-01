@@ -73,7 +73,7 @@ def webScraper():
 
                 date = date.strftime('%Y-%m-%d')
 
-                story = Story(company.companyname,link,headline,date,analysis.analyse(model,headline)[0])
+                story = Story(company.companyname,link,headline,date,round(analysis.analyse(model,headline)[0],2))
                 db.session.add(story)
                 check_story(story)
 
@@ -88,6 +88,7 @@ def webScraper():
     #    app.logger.info(t.headline)
     #    app.logger.info(t.impact)
 
+#Checks to see if the users need to get notices for a story
 def check_story(story):
 
     if story.impact > 0.5 or story.impact < -0.5:

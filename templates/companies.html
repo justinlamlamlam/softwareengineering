@@ -257,6 +257,7 @@
                             // Loop through all list-items:
                             for (i = 0; i < (b.length - 1); i++) {
                                 // start by saying there should be no switching:
+                                //b.style.display = "";
                                 shouldSwitch = false;
                                 /* check if the next item should
                                 switch place with the current item: */
@@ -279,8 +280,11 @@
                                 b[i].parentNode.insertBefore(b[i + 1], b[i]);
                                 switching = true;
                             }
+
                         }
                     }
+
+                    pagination("1");
 
                     
                 }

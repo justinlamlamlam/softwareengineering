@@ -12,9 +12,14 @@ from barcode import EAN13
 from barcode.writer import SVGWriter
 import random 
 import string 
+from datetime import datetime
 #import numpy
+from jinja2 import Template
+from datetime import datetime
+import math
 
 import webScraper
+import stock
 
 # create the Flask app
 from flask import Flask, render_template, request, session, redirect
@@ -24,12 +29,6 @@ mail = Mail(app)
 # select the database filename
 app.config['SQLALCHEMY_DATABASE_URI'] = f'sqlite:///database.sqlite'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
-
-#Sets the routes to the folders where the barcodes and event images are stored
-#BARCODE_FOLDER = 'static/barcode'
-#app.config['BARCODE_FOLDER'] = BARCODE_FOLDER
-#EVENT_FOLDER = 'static/event'
-#app.config['EVENT_FOLDER'] = EVENT_FOLDER
 
 # set up a 'model' for the data 
 from db_schema import db, dbinit, User, Company, Company_tag, Company_tracked, Story, Notification
@@ -44,7 +43,7 @@ app.secret_key = code
 
 
 # change this to False to avoid resetting the database every time this app is restarted
-resetdb = True
+resetdb = False
 if resetdb:
     with app.app_context():
         # drop everything, create all the tables, then put some data into the tables
@@ -179,17 +178,55 @@ def company(company_id):
         tracked.append(i.companyname)
     
     stories = Story.query.filter_by(companyname=company.companyname)
-    notices = notification()
+    stories_sorted = []
 
-    return render_template('company.html',company=company,tracked=tracked,stories=stories,notices=notices)
+    for i in stories:
+        stories_sorted.append(i)
+    
+    stories_sorted.sort(key=sort_story_bydate,reverse=True)
+
+    if request.method != "POST":
+        stories_sorted = stories_sorted[:5]
+    
+    seemore = True
+    if request.method == "POST":
+        seemore = False
+
+    notices = notification()
+    reputation = current_reputation(company.companyname)
+
+    today_date = datetime.today().strftime('%Y-%m-%d')
+    fig = stock.get_stock_fig(company.stock_symb, specific_dates_range=("2024-01-01", today_date), stories=stories)
+
+    return render_template('company.html',company=company,tracked=tracked,stories=stories_sorted,notices=notices, reputation=reputation,fig=fig.to_html(full_html=False),seemore=seemore)
 
 #Home page
 @app.route('/home.html', methods=['POST','GET'])
 def home():
     
     notices = notification()
+    companies_tracked = Company_tracked.query.filter_by(userid = session['id'])
 
-    return render_template('home.html',notices=notices)
+    stories = []
+
+    for i in companies_tracked:
+
+        story = Story.query.filter_by(companyname=i.companyname)
+        for entry in story:
+            stories.append(entry)
+
+    stories.sort(key=sort_story_bydate,reverse=True)
+    
+    stories = stories[:5]
+
+    return render_template('home.html',notices=notices,stories=stories)
+
+#Function to help sort story by date
+def sort_story_bydate(story):
+
+    date = datetime.strptime(story.timestamp, '%Y-%m-%d')
+
+    return date
 
 #When tracking a company
 @app.route('/trackcompany.html', methods=['POST','GET'])
@@ -199,21 +236,13 @@ def trackcompany():
     db.session.add(Company_tracked(session['id'],companyname))
     db.session.commit()
 
-    companies = Company.query.all()
-    tracked_companies = Company_tracked.query.filter_by(userid = session['id'])
-    tracked = []
-    for i in tracked_companies:
-        tracked.append(i.companyname)
-    
-    notices = notification()
-
     if request.method == 'GET':
         company_id = request.values.get('companyid')
-        company = Company.query.filter_by(id = company_id).first()
-        stories = Story.query.filter_by(companyname=company.companyname)
-        return render_template('company.html',company=company,tracked=tracked,stories=stories,notices=notices)
+        
+        return company(company_id)
+
     else:
-        return render_template('companies.html',companies=companies,tracked=tracked,notices=notices)
+        return companies()
 
 #When untracking a company
 @app.route('/untrackcompany.html', methods=['POST','GET'])
@@ -224,22 +253,15 @@ def untrackcompany():
     db.session.delete(query)
     db.session.commit()
 
-    companies = Company.query.all()
-    tracked_companies = Company_tracked.query.filter_by(userid = session['id'])
-    tracked = []
-    for i in tracked_companies:
-        tracked.append(i.companyname)
-
-    notices = notification()
-    
     if request.method == 'GET':
         company_id = request.values.get('companyid')
-        company = Company.query.filter_by(id = company_id).first()
-        stories = Story.query.filter_by(companyname=company.companyname)
-        return render_template('company.html',company=company,tracked=tracked,stories=stories,notices=notices)
-    else:
-        return render_template('companies.html',companies=companies,tracked=tracked,notices=notices)
+        
+        return company(company_id)
 
+    else:
+        return companies()
+
+#Function to retrieve all notifications from database
 def notification():
 
     notifications = Notification.query.filter_by(userid = session['id'])
@@ -249,9 +271,38 @@ def notification():
         story = Story.query.filter_by(id = entry.storyid).first()
         companyname = story.companyname
         impact = story.impact
-        time = story.timestamp
+        date = datetime.strptime(story.timestamp, '%Y-%m-%d')
+        if date.day == datetime.now().day:
+            time = "Today"
+        else:
+            time = str(datetime.now() - date)
+            time = time[:time.find(",")] + " ago"
+
 
         notice = "There is a new story about " + companyname + " with an impact of " + str(impact) + " (" + time + ")"
         notices.append(notice)
     
     return notices
+
+#Function to get current public opinion on company
+def current_reputation(companyname):
+
+    stories = Story.query.filter_by(companyname=companyname)
+    reputation = 0
+    #lamba is the rate of decay, the higher the faster, meaning new stories will have higher impact on reputation
+    lambda_value = 0.01
+    counter = 0
+
+
+    for i in stories:
+        date = datetime.strptime(i.timestamp, '%Y-%m-%d')
+        days_ago = (datetime.now() - date).days
+
+        #Exponential decay function to take in the factor of how recent the stories are
+        reputation = reputation + (i.impact * math.exp(-lambda_value * days_ago))
+        counter+=1
+    
+    reputation = reputation/counter
+
+
+    return reputation

@@ -1,81 +1,130 @@
 {% extends "layout.html" %}
 {% block content %}
 
+<style>
+    .double-rounded-border {
+      border: 2px solid #000; /* Outer border */
+      border-radius: 20px; /* Adjust as needed */
+      overflow: hidden; /* Ensures inner border doesn't overflow */
+    }
+    .double-rounded-border-inner {
+      border: 2px solid #000; /* Inner border */
+      border-radius: 20px; /* Adjust as needed */
+      padding: 10px; /* Adjust as needed */
+    }
+</style>
+
 <div class="center">
+    <div class="container-sm w-50 px-4 text-center">
+        <div class="row justify-content-center">
+            <div class="col w-50 d-flex justify-content-center align-items-center">
+                <div class="input-group">
+                    <span class="input-group-text" id="search-addon">
+                        <i class="bi bi-search" width="16" height="16"></i>
+                    </span>
+                    <input class="form-control" type="text" id="searchbar" onkeyup="searchbar()" placeholder="Search for companies...">
+                </div>
+            </div>
+            <div class="col w-50 justify-content-start">
+                <div class="row">
+                    <div class="col-2 d-flex align-items-center justify-content-center p-0">
+                        Sort by
+                    </div>
+                    <div class="col d-flex justify-content-center align-items-center p-0">
+                        <select class="form-select" onchange="sortList(this.value)">
+                            <option value="1">Alphabetical Order</option>
+                            <option value="2">Tracked Companies</option>
+                            <option value="3">Suggested</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 
-    <input type="text" id="searchbar" onkeyup="searchbar()" placeholder="Search for companies...">
-    <c>Sort by</c>
-    <select onchange="sortList(this.value)">
-        <option value="1">Alphabetical Order</option>
-        <option value="2">Tracked Companies</option>
-        <option value="3">Suggested</option>
-
-    </select>
     <br><br>
         {% for entry in companies %}
-        
-        <table id="{{entry.id}}" name="companytable" style="width: 600px;">
-        <thead>
-            <tr>
 
-                <d><th width='200px'><a href="company{{entry.id}}.html" style="font-size: 25px;"><br><br>{{entry.companyname}}</a></th></d>
+    <div class="container">
+        <div class="card mb-4 p-3" name="companyCard" style="border-width: 0px; box-shadow: 0 0 0 6px #163970, 0 0 0 9px #1a1a1a; background-color: #97accc">
+            <div class="row">
+                <div class="col-sm-3 d-flex justify-content-center align-items-center">
+                    <img src="static/logos/{{entry.companyname}}" height = "150px" weight = "150px" onerror="this.onerror=null;style='display: none;'"/>
+                </div>
+                <div class="col-sm-9">
+                    <div class="row h-25">
+                        <div class="col col-sm-6 mx-auto">
+                            <a href="company{entry.id}.html" class="btn btn-dark" style="font-size: 17px;">{{entry.companyname}}</a>
+                        </div>
+                    </div>
+                        <div class="row h-50 mt-1 border border-2 rounded border-warning me-1 bg-secondary align-items-center justify-content-center p-1">
+                            <div class="col d-flex align-items-center justify-content-center mh-100">
+                                <p class="text-center text-wrap fs-3 align-items-center justify-content-center" style="margin: 0;">
+                                    Networth: ${{entry.networth}}B
+                                </p>
+                            </div>
+                            <div class="col d-flex align-items-center justify-content-center mh-100">
+                                <p class="text-center text-wrap fs-3 align-items-center justify-content-center" style="margin: 0;">
+                                    Number of employees: {{entry.num_emp}}
+                                </p>
+                            </div>
+                            <div class="col d-flex align-items-center justify-content-center mh-100">
+                                <p class="text-center text-wrap fs-3 align-items-center justify-content-center" style="margin: 0;">
+                                    Stock Symbol: {{entry.stock_symb}}
+                                </p>
+                            </div>
+                        </div>
+                    <div class="row h-25 mt-2">
+                        {% if entry.companyname in tracked %}
 
-            </tr>
-        </thead>
-        <tbody>
+                        <form action="untrackcompany.html" method="POST" onsubmit="untrack()">
+                            <input class="btn btn-dark" type="hidden" name="companyname" value="{{entry.companyname}}">
+                            <input class="btn btn-dark" type="submit" value="Untrack Company" style="color: rgb(233, 136, 136);">
+                        </form>
+                        <hidden style="display: none;">tracked</hidden>
 
-            <tr>
-                <td>Networth: {{entry.networth}}</td>
-                <td>Number of Employees: {{entry.num_emp}}</td>
-                <td>Stock Symbol: {{entry.stock_symb}}</td>
-                <td><br><br><br><br></td>
-            </tr>
+                        {% else %}
 
-            <tr style="width:10px; height:10px; overflow: hidden;text-overflow: ellipsis;">
-                <td>CEO: {{entry.ceoname}}</td>
+                        <form action="trackcompany.html" method="POST">
+                            <input class="btn btn-dark" type="hidden" name="companyname" value="{{entry.companyname}}">
+                            <input class="btn btn-dark" type="submit" value="Track Company">
+                        </form>
+                        <hidden style="display: none;">untracked</hidden>
 
-                {% if entry.companyname in tracked %}
-                <td>
-                    <form action="untrackcompany.html" method="POST" onsubmit="untrack()">
-                        <input type="hidden" name="companyname" value="{{entry.companyname}}">
-                        <input type="submit" value="Untrack Company" style="color: rgb(233, 136, 136);">
-                    </form>
-                    <hidden style="display: none;">tracked</hidden>
-                </td>
-                {% else %}
-                <td>
-                    <form action="trackcompany.html" method="POST">
-                        <input type="hidden" name="companyname" value="{{entry.companyname}}">
-                        <input type="submit" value="Track Company">
-                    </form>
-                    <hidden style="display: none;">untracked</hidden>
-
-                </td>
-                {% endif %}      
-
-                <td><img src="static/logos/{{entry.companyname}}" height = "150px" weight = "150px" onerror="this.onerror=null;style='display: none;'"/></td>
-            </tr>
-            
-        </tbody>
-        </table>
+                        {% endif %}
+                    </div>
+                </div>
+                </div>
+            </div>
+        </div>
         
         {% endfor %}
 
-        <div class="pagination">
-            <button class="pagebutton" onclick="pagination('1')">&laquo;</button>
-            <button class="pagebutton" id="button1" class="active" onclick="pagination('1')">1</button>
-            <button class="pagebutton" id="button2" onclick="pagination('2')">2</button>
-            <button class="pagebutton" id="button3" onclick="pagination('3')">3</button>
-            <button class="pagebutton" id="button4" onclick="pagination('4')">4</button>
-            <button class="pagebutton" onclick="pagination('4')">&raquo;</button>
-          </div>
-
+        
+        <nav>
+            <ul class="pagination justify-content-center">
+            <li class="page-item">
+                <a class="page-link" href="#" onclick="pagination(1)" aria-label="Previous">
+                <span aria-hidden="true">&laquo;</span>
+                </a>
+            </li>
+            <li class="page-item"><a class="page-link" href="#" onclick="pagination(1)">1</a></li>
+            <li class="page-item"><a class="page-link" href="#" onclick="pagination(2)">2</a></li>
+            <li class="page-item"><a class="page-link" href="#" onclick="pagination(3)">3</a></li>
+            <li class="page-item"><a class="page-link" href="#" onclick="pagination(4)">4</a></li>
+            <li class="page-item">
+                <a class="page-link" href="#" onclick="pagination(4)" aria-label="Next">
+                <span aria-hidden="true">&raquo;</span>
+                </a>
+            </li>
+            </ul>
+        </nav>
           
         <script>
             
             window.onload=function(){
-                pagination("1");
                 sortList(1);
+                pagination("1");
             }
 
             function pagination(number){
@@ -83,7 +132,7 @@
                 const pageNumber = parseInt(number);
     
                 const buttons = document.getElementsByClassName("pagebutton");
-                const tables = document.getElementsByTagName("table");
+                const tables = document.getElementsByName("companyCard");
     
                 // Loop through all buttons to remove 'active' class
                 for (let i = 0; i < buttons.length; i++) {
@@ -114,7 +163,7 @@
                     input = document.getElementById("searchbar");
                     //Makes the input into uppercase 
                     filter = input.value.toUpperCase();
-                    tb = document.getElementsByName("companytable");
+                    tb = document.getElementsByName("companyCard");
                     var counter = 0;
                     const buttons = document.getElementsByClassName("pagebutton");
                     for (let i = 0; i < buttons.length; i++) {
@@ -168,7 +217,7 @@
                         while (switching) {
                             // start by saying: no switching is done:
                             switching = false;
-                            b = document.getElementsByName("companytable");
+                            b = document.getElementsByName("companyCard");
                             // Loop through all list-items:
                             for (i = 0; i < (b.length - 1); i++) {
                                 // start by saying there should be no switching:
@@ -204,7 +253,7 @@
                         while (switching) {
                             // start by saying: no switching is done:
                             switching = false;
-                            b = document.getElementsByName("companytable");
+                            b = document.getElementsByName("companyCard");
                             // Loop through all list-items:
                             for (i = 0; i < (b.length - 1); i++) {
                                 // start by saying there should be no switching:

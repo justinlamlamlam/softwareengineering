@@ -32,8 +32,10 @@
     <br><br>
         {% for entry in companies %}
 
+
     <div class="container">
         <div class="card mb-4 p-3" name="companyCard" style="border-width: 0px; box-shadow: 0 0 0 6px #163970, 0 0 0 9px #1a1a1a; background-color: #97accc">
+            
             <div class="row">
                 <div class="col-sm-3 d-flex justify-content-center align-items-center">
                     <img src="static/logos/{{entry.companyname}}" height = "150px" weight = "150px" onerror="this.onerror=null;style='display: none;'"/>
@@ -80,11 +82,13 @@
 
                         {% endif %}
                     </div>
+
+                    <hidden style="display: none;">{{company_recommendation[entry.id]}}</hidden>
                 </div>
                 </div>
             </div>
         </div>
-        
+        </div>
         {% endfor %}
 
         
@@ -269,6 +273,49 @@
                             }
 
                         }
+                    }
+
+                    if(value == 3){
+                        switching = true;
+                        /* Make a loop that will continue until
+                        no switching has been done: */
+
+                        while (switching) {
+                            // start by saying: no switching is done:
+                            switching = false;
+                            b = document.getElementsByName("companyCard");
+                            // Loop through all list-items:
+                            for (i = 0; i < (b.length - 1); i++) {
+                                // start by saying there should be no switching:
+                                //b.style.display = "";
+                                shouldSwitch = false;
+                                /* check if the next item should
+                                switch place with the current item: */
+                                a = b[i].getElementsByTagName("hidden")[1];
+                                txtValue = a.textContent || a.innerText;
+                                a2 = b[i+1].getElementsByTagName("hidden")[1];
+                                txtValue2 = a2.textContent || a2.innerText;
+
+                                if (txtValue < txtValue2) {
+                                    /* if next item is alphabetically
+                                    lower than current item, mark as a switch
+                                    and break the loop: */
+                                    shouldSwitch = true;
+                                    break;
+                                }
+                            }
+                            if (shouldSwitch) {
+                                /* If a switch has been marked, make the switch
+                                and mark the switch as done: */
+                                b[i].parentNode.insertBefore(b[i + 1], b[i]);
+                                switching = true;
+                            }
+
+                        }
+
+                        sortList(2);
+
+
                     }
 
                     pagination("1");

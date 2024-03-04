@@ -155,15 +155,24 @@ def logout():
 @app.route('/companies.html', methods=['POST','GET'])
 def companies():
 
-    companies = Company.query.all()
+    companies_raw = Company.query.all()
+    companies = []
+    company_recommendation = []
+
     tracked_companies = Company_tracked.query.filter_by(userid = session['id'])
     tracked = []
     for i in tracked_companies:
         tracked.append(i.companyname)
     
+    company_recommendation.append(0)
+    for i in companies_raw:
+        companies.append(i)
+        company_recommendation.append(recommendation(i.companyname))
+    
+    print(company_recommendation)
     notices = notification()
     
-    return render_template('companies.html',companies=companies,tracked=tracked,notices=notices)
+    return render_template('companies.html',companies=companies,tracked=tracked,notices=notices,company_recommendation=company_recommendation)
 
 #Individual companies page
 @app.route('/company<company_id>.html',methods=['POST','GET'])
@@ -206,11 +215,14 @@ def home():
     
     notices = notification()
     companies_tracked = Company_tracked.query.filter_by(userid = session['id'])
+    tracked = []
 
     stories = []
 
     for i in companies_tracked:
 
+        temp = Company.query.filter_by(companyname=i.companyname).first()
+        tracked.append(temp)
         story = Story.query.filter_by(companyname=i.companyname)
         for entry in story:
             stories.append(entry)
@@ -219,7 +231,29 @@ def home():
     
     stories = stories[:5]
 
-    return render_template('home.html',notices=notices,stories=stories)
+    companies = Company.query.all()
+    companylist = []
+    untrackedcompanies = []
+
+    for i in companies:
+        companylist.append(i)
+    
+    
+    for element in companylist:
+        if element not in tracked:
+            untrackedcompanies.append(element.companyname)
+    
+    untrackedcompanies.sort(key=recommendation,reverse=True)
+    recommendedcompanies = []
+
+    for i in range (3):
+
+        temp = Company.query.filter_by(companyname=untrackedcompanies[i]).first()
+        recommendedcompanies.append(temp)
+    
+
+
+    return render_template('home.html',notices=notices,stories=stories,recommendedcompanies=recommendedcompanies)
 
 #Function to help sort story by date
 def sort_story_bydate(story):
@@ -303,6 +337,57 @@ def current_reputation(companyname):
         counter+=1
     
     reputation = reputation/counter
+    reputation = round(reputation,2)
 
 
     return reputation
+
+#Recommendation function
+def recommendation(companyname1):
+    track_company=Company_tracked.query.filter_by(userid=session["id"])
+    tracked=[]
+    storytimestamp = []
+    x=0
+
+    tag1= Company_tag.query.filter_by(companyname=companyname1)
+
+    for i in track_company:
+        tracked.append(i.companyname)
+    for i in range (len(tracked)):
+        tag = Company_tag.query.filter_by(companyname=tracked[i])
+
+        for k in tag1:
+            for j in tag:
+                if k.tag == j.tag:
+                    x=x+1
+
+    story = Story.query.filter_by(companyname=companyname1)
+    for i in story:
+        storytimestamp.append(i)
+
+    storytimestamp.sort(key=sort_story_bydate,reverse=True)
+    if len(storytimestamp)< 5:
+        y=365
+    else:
+        today=datetime.now()
+        storytimestamp5th=storytimestamp[4].timestamp
+        date = datetime.strptime(storytimestamp5th, '%Y-%m-%d')
+        y=(today-date).days
+
+    z=current_reputation(companyname1)
+
+    a = 2
+    b = 1.2
+    c = 0.5
+    d = 2
+    e = 0.5
+    f = 2
+
+
+    B=math.log(y,d)
+    z=abs(z)
+
+    C=math.log(z,f)
+    S=(a*(b**x))+(c/B)+(e/C)
+
+    return S

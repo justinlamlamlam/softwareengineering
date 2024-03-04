@@ -117,8 +117,8 @@ def dbinit():
 
     all_tags = [
 
-        Company_tag("Apple","Information technology"),
-        Company_tag("Microsoft","Information technology"),
+        Company_tag("Apple","Technology"),
+        Company_tag("Microsoft","Technology"),
         Company_tag("Amazon","Consumer discretionary"),
         Company_tag("Google","Technology"),
         Company_tag("Meta Platforms","Technology"),

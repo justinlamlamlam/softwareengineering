@@ -376,6 +376,7 @@ def recommendation(companyname1):
 
     z=current_reputation(companyname1)
 
+    '''
     a = 2
     b = 1.2
     c = 0.5
@@ -383,11 +384,32 @@ def recommendation(companyname1):
     e = 0.5
     f = 2
 
-
     B=math.log(y,d)
     z=abs(z)
 
     C=math.log(z,f)
     S=(a*(b**x))+(c/B)+(e/C)
+
+    return S'''
+
+    a=0.6
+    b=2
+    c=5
+    d=2
+    e=1
+    f=3
+    B=math.log(y,d)
+    F=(a*(b**x))
+    G=(c/B)
+    E=(e/c)
+    if z < -0.8 or z > 0.8:
+        E=5
+    if y==1:
+        G=5
+    if z < 0:
+        z=abs(z)
+        S=F+G+E
+    else :
+        S=F+G-E
 
     return S

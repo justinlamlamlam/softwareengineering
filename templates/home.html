@@ -1,35 +1,73 @@
 {% extends "layout.html" %}
 {% block content %}
-<div class="center">
 
+<div class="container-fluid">
     <p>{{"Welcome to MarketMood, " + session['username']}}</p>
 
     Latest stories of your tracked companies:
 
     <br><br>
 
-    
-        <div class="stories" style="margin-left: 25%;">
-            {% for story in stories%}
-            <table>
-                <tbody>
-                    <tr><td><b>{{story.headline}}</b></td></tr>
-                    <tr><td><a href="{{story.url}}" target="_blank">Source</a></td></tr>
-                    
-                    <tr><td>Date: {{story.timestamp}}</td></tr>
-                    <tr><td>Possible Impact of Story on {{story.companyname}}: {{story.impact}}</td></tr>
-                </tbody>
-                
-                <br><br>
-            </table>
-            {% endfor %}
+    <div class="container" style="text-align: center;">
+
+        {% for story in stories %}
+
+        <div class="card mb-5 p-4" style="border-width: 0px; box-shadow: 0 0 0 6px #163970, 0 0 0 9px #1a1a1a; background-color: #97accc">
+
+            <div class="row">
+                <div class="col-sm-3 d-flex justify-content-center align-items-center">
+                    <img src="static/logos/{{story.companyname}}" height = "150px" weight = "150px" onerror="this.onerror=null;style='display: none;'"/>
+                </div>
+                <div class="col-sm-9">
+                    <div class="row mb-2 justify-content-center align-items-center">
+                            <div class="col-md-auto">
+                                <a href="company{{story.id}}.html" class="btn btn-dark" style="font-size: 17px;">{{story.companyname}}</a>
+                            </div>
+                            <div class="col flex-grow-1">
+                                <p class="mb-0" style="color: #1C1D21;">
+                                    <b> <span style="font-size: 24px;">&#128240;</span> {{story.headline}}</b>
+                                </p>
+                            </div>
+                        
+                        
+                    </div>
+                    <div class="row h-75 me-1 border border-2 rounded border-warning bg-secondary">
+                        <div class="vstack mt-1 justify-content-center align-items-center">
+                            <div class="hstack justify-content-center">
+                                <p class="mb-0 align-items-center" style="font-size: 24px;">
+                                    &#127760;
+                                </p>
+                                <a class="p-1 align-items-center btn btn-outline-info" href="{{story.url}}" style="text-decoration: none;">
+                                    Source
+                                </a>
+                            </div>
+                            <p class="mb-0 flex-grow-1 align-items-center">
+                                <span style="font-size: 24px;">&#128197;</span>Date: {{story.timestamp}}
+                            </p>
+                            {% if story.impact >= 0.5 %}
+                            <p class="mb-0 flex-grow-1 align-items-center">
+                                <span style="font-size: 24px;">&#128200;</span>Possible Impact of Story on {{story.companyname}}: {{story.impact}}
+                            </p>
+                            {% else %}
+                            <p class="mb-0 flex-grow-1 align-items-center">
+                                <span style="font-size: 24px;">&#128201;</span>Possible Impact of Story on {{story.companyname}}: {{story.impact}}
+                            </p>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
 
+    {% endfor %}
+
+    </div>
+</div>
+<!---
     Companies suggested to you:
     <br><br>
-
     {% for entry in recommendedcompanies %}
-    <div class="container">
+    <div class="container" style="text-align: center;">
         <div class="card mb-4 p-3" name="companyCard" style="border-width: 0px; box-shadow: 0 0 0 6px #163970, 0 0 0 9px #1a1a1a; background-color: #97accc">
             
             <div class="row">
@@ -71,12 +109,9 @@
                 </div>
                 </div>
             </div>
-        </div>
-        </div>
+    </div>
     {% endfor %}
-
-
-</div>
+-->
 
 <div class="notification">
     <div class="modal-content">

@@ -39,7 +39,7 @@ def webScraper():
         driver.find_element(By.LINK_TEXT,'News').click()
         results = driver.find_elements(By.CLASS_NAME,'WlydOe')
 
-        times = driver.find_elements(By.XPATH,"//div[@class='OSrXXb rbYSKb LfVVr']")
+        times = driver.find_elements(By.XPATH,"//div[contains(@class'OSrXXb rbYSKb')]")
 
         companyStories = Story.query.filter_by(companyname=company.companyname)
 
@@ -79,14 +79,6 @@ def webScraper():
 
     db.session.commit()
     driver.close()
-
-    #more testting
-    #test = Story.query.filter_by(companyname="Wells Fargo")
-    #app.logger.info("All Wells Fargo Stories")
-    #for t in test:
-    #    app.logger.info(t.companyname)
-    #    app.logger.info(t.headline)
-    #    app.logger.info(t.impact)
 
 #Checks to see if the users need to get notices for a story
 def check_story(story):

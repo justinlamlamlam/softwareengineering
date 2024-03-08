@@ -42,7 +42,7 @@ def webScraper():
         driver.find_element(By.LINK_TEXT,'News').click()
         results = driver.find_elements(By.CLASS_NAME,'WlydOe')
 
-        times = driver.find_elements(By.XPATH,"//div[contains(@class'OSrXXb rbYSKb')]")
+        times = driver.find_elements(By.XPATH,"//div[contains(@class,'OSrXXb rbYSKb')]")
 
         companyStories = Story.query.filter_by(companyname=company.companyname)
 
@@ -134,8 +134,6 @@ def checknumberofstories(companyname):
             db.session.delete(stories[i])
         
         db.session.commit()
-
-    
 
 
 #Function to help sort story by date

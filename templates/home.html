@@ -1,68 +1,96 @@
 {% extends "layout.html" %}
 {% block content %}
 
-<div class="container-fluid">
-    <p>{{"Welcome to MarketMood, " + session['username']}}</p>
+<div class="main">
+    <div class="container-fluid">
+        <p class="text-center fs-1" style="font-family: Poppins;">{{"Welcome to MarketMood, " + session['username']}} </p>
+        <br>
+        <p class="text-center fs-2" style="font-family: Poppins;">Latest stories of your tracked companies:</p>
+        <br>
 
-    Latest stories of your tracked companies:
+        <div class="container" style="text-align: center;">
 
-    <br><br>
+            {% for story in stories %}
 
-    <div class="container" style="text-align: center;">
+            <div class="card mb-5 p-4" style="border-width: 0px; box-shadow: 0 0 0 6px #163970, 0 0 0 9px #1a1a1a; background-color: #97accc">
 
-        {% for story in stories %}
-
-        <div class="card mb-5 p-4" style="border-width: 0px; box-shadow: 0 0 0 6px #163970, 0 0 0 9px #1a1a1a; background-color: #97accc">
-
-            <div class="row">
-                <div class="col-sm-3 d-flex justify-content-center align-items-center">
-                    <img src="static/logos/{{story.companyname}}" height = "150px" weight = "150px" onerror="this.onerror=null;style='display: none;'"/>
-                </div>
-                <div class="col-sm-9">
-                    <div class="row mb-2 justify-content-center align-items-center">
-                            <div class="col-md-auto">
-                                <a href="company{{story.id}}.html" class="btn btn-dark" style="font-size: 17px;">{{story.companyname}}</a>
-                            </div>
-                            <div class="col flex-grow-1">
-                                <p class="mb-0" style="color: #1C1D21;">
-                                    <b> <span style="font-size: 24px;">&#128240;</span> {{story.headline}}</b>
-                                </p>
-                            </div>
-                        
-                        
+                <div class="row">
+                    <div class="col-sm-3 d-flex justify-content-center align-items-center">
+                        <div style="height: 150px; width: 150px;">
+                            <img src="static/logos/{{story.companyname}}" class="img-fluid" onerror="this.onerror=null;style='display: none;'"/>
+                        </div>
                     </div>
-                    <div class="row h-75 me-1 border border-2 rounded border-warning bg-secondary">
-                        <div class="vstack mt-1 justify-content-center align-items-center">
-                            <div class="hstack justify-content-center">
-                                <p class="mb-0 align-items-center" style="font-size: 24px;">
-                                    &#127760;
+                    <div class="col-sm-9">
+                        <div class="row mb-2 justify-content-center align-items-center">
+                                <div class="col-md-auto">
+                                    <a href="company{{story.id}}.html" class="btn btn-dark fw-medium" style="font-size: 17px;">{{story.companyname}}</a>
+                                </div>
+                                <div class="col flex-grow-1">
+                                    <p class="mb-0" style="color: #1C1D21;">
+                                        <b> <span style="font-size: 24px;">&#128240;</span> {{story.headline}}</b>
+                                    </p>
+                                </div>
+                            
+                            
+                        </div>
+                        <div class="row me-1 border border-2 rounded border-warning bg-secondary">
+                            <div class="vstack mt-1 justify-content-center align-items-center">
+                                <div class="hstack justify-content-center">
+                                    <p class="mb-0 align-items-center" style="font-size: 24px;">
+                                        &#127760;
+                                    </p>
+                                    <a class="p-1 align-items-center btn btn-outline-info" href="{{story.url}}" style="text-decoration: none;">
+                                        Source
+                                    </a>
+                                </div>
+                                <p class="mb-0 flex-grow-1 align-items-center">
+                                    <span style="font-size: 24px;">&#128197;</span>Date: {{story.timestamp}}
                                 </p>
-                                <a class="p-1 align-items-center btn btn-outline-info" href="{{story.url}}" style="text-decoration: none;">
-                                    Source
-                                </a>
+                                {% if story.impact >= 0 %}
+                                <p class="mb-0 flex-grow-1 align-items-center">
+                                    <span style="font-size: 24px;">&#128200;</span>Possible Impact of Story on {{story.companyname}}: {{story.impact}}
+                                </p>
+                                {% else %}
+                                <p class="mb-0 flex-grow-1 align-items-center">
+                                    <span style="font-size: 24px;">&#128201;</span>Possible Impact of Story on {{story.companyname}}: {{story.impact}}
+                                </p>
+                                {% endif %}
                             </div>
-                            <p class="mb-0 flex-grow-1 align-items-center">
-                                <span style="font-size: 24px;">&#128197;</span>Date: {{story.timestamp}}
-                            </p>
-                            {% if story.impact >= 0.5 %}
-                            <p class="mb-0 flex-grow-1 align-items-center">
-                                <span style="font-size: 24px;">&#128200;</span>Possible Impact of Story on {{story.companyname}}: {{story.impact}}
-                            </p>
-                            {% else %}
-                            <p class="mb-0 flex-grow-1 align-items-center">
-                                <span style="font-size: 24px;">&#128201;</span>Possible Impact of Story on {{story.companyname}}: {{story.impact}}
-                            </p>
-                            {% endif %}
                         </div>
                     </div>
                 </div>
             </div>
+
+        {% endfor %}
+
         </div>
-
-    {% endfor %}
-
     </div>
 </div>
+
+
+<div class="sidebar d-flex">
+    <div class="d-flex  flex-grow-1 flex-column justify-content-between p-3">
+        <h1 class="text-center">Recommended Companies</h1>
+        {% for entry in recommendedcompanies %}
+            <div class="card p-3">
+                <div class="row">
+                    <div class="col-sm-5 d-flex justify-content-center align-items-center" style="height: 150px">
+                        <img class="img-fluid" src="static/logos/{{entry.companyname}}" onerror="this.onerror=null;style='display: none;'"/>
+                    </div>
+                    
+                    <div class="d-flex col-sm-7 mx-auto align-items-center justify-content-center">
+                        <a href="company{{entry.id}}.html" class="btn btn-dark fw-medium" style="font-size: 17px;">{{entry.companyname}}</a>
+                    </div>
+
+                </div>
+            </div>
+        {% endfor %}    
+    </div>
+</div>
+
+
+
+
 <!---
     Companies suggested to you:
     <br><br>

@@ -71,7 +71,7 @@ def login():
             return render_template('login.html',message="Username does not exist")
         #Checks the password in a secure way 
         if not security.check_password_hash(user.password, user_password):
-            return render_template("login.html",message="Password Incorrect")
+            return render_template("login.html",message="Incorrect password")
 
         #Sets all the session keys 
         session['id'] = user.id 
@@ -116,7 +116,7 @@ def register():
             return render_template('verify.html',message='',username=username,user_password=user_password)
 
         except:
-            return render_template('register.html',message="Username/Email already used")
+            return render_template('register.html',message="Invalid Email or Username/Email already associated with an account")
     else:
         return render_template('register.html')
   
@@ -141,7 +141,7 @@ def verify():
             db.session.delete(user)
             db.session.commit()
             
-            return render_template('register.html',message="Verification Code Incorrect")
+            return render_template('register.html',message="Verification code incorrect")
 
 @app.route('/logout.html')
 def logout():

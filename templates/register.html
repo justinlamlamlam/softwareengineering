@@ -34,70 +34,73 @@ charset="utf-8">
   <body>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
     
-    <form class="form-register" action="register.html" method="POST">
-      <p>{{message}}</p>
-      <h1>Register for our site</h1>
+    <br>
+
+    <div class="container">
       
-      <div class="row">
-        <div class="col">
-          <div class="form-floating mb-2">
-            <input class="form-control" type="text" name="username" id="usernameForm"  placeholder="Username" required>
-            <label for="usernameForm">Username</label>
-          </div>
-        </div>
+      <div id="messageDiv" class="alert alert-danger text-start mx-auto" style="display: none; max-width: 330px;">
+        <span id="message">{{message}}</span>
       </div>
+    
+      <form class="form-register" action="register.html" method="POST">
+        <h1>Register for our site</h1>
         
-      <div class="row">
-        <div class="col">
-           <div class="form-floating mb-2">
-            <input class="form-control" type="email" name="user_email" id="emailForm" placeholder="Email" required>
-            <label for="emailForm">Email</label>
+        <div class="row">
+          <div class="col">
+            <div class="form-floating mb-2">
+              <input class="form-control" type="text" name="username" id="usernameForm"  placeholder="Username" required>
+              <label for="usernameForm">Username</label>
+            </div>
           </div>
         </div>
-      </div>
-
-      <div class="row">
-        <div class="col">
-          <div class="form-floating mb-2">
-            <input class="form-control" type="password" name="user_password" id="passForm" placeholder="Password" required>
-            <label for="passForm">Password</label>
+          
+        <div class="row">
+          <div class="col">
+            <div class="form-floating mb-2">
+              <input class="form-control" type="email" name="user_email" id="emailForm" placeholder="Email" required>
+              <label for="emailForm">Email</label>
+            </div>
           </div>
         </div>
 
-        <div class="col">
-          <div class="form-floating mb-2">
-            <input class="form-control" type="password" name="confirm_password" id="confirmForm" placeholder="Confirm Password" required>
-            <label for="confirmForm">Confirm Password</label>
+        <div class="row">
+          <div class="col">
+            <div class="form-floating mb-2">
+              <input class="form-control" type="password" name="user_password" id="passForm" placeholder="Password" required>
+              <label for="passForm">Password</label>
+            </div>
+          </div>
+
+          <div class="col">
+            <div class="form-floating mb-2">
+              <input class="form-control" type="password" name="confirm_password" id="confirmForm" placeholder="Confirm Password" required>
+              <label for="confirmForm">Confirm Password</label>
+            </div>
           </div>
         </div>
-      </div>
 
-      <button class="btn btn-primary w-100 py-2" type="submit" value="Register">Register</button>
+        <button class="btn btn-primary w-100 py-2" type="submit" value="Register">Register</button>
 
-      <a class="btn btn-secondary w-100 py-2 mt-2" href="login.html" role="button">Login</a>
-
-    </form>
-  </body>
-</html>
-
-      
-  <!----
-      <form action="register.html" method="POST">
-          <br><br>
-          <input type='text' name="username" placeholder="Username" required> 
-          <br><br>
-          <input type='password' name='user_password' placeholder="Password" required> 
-          <br><br>
-          <input type='password' name='confirm_password' placeholder="Confirm Password" required> 
-          <br><br>
-          <input type="email" name='user_email' placeholder="Email" required> 
-          <br><br>
-          <input type="submit" value="Register">
-          <br><br>
-          <r><a href="login.html">Login</a></r>
+        <a class="btn btn-secondary w-100 py-2 mt-2" href="login.html" role="button">Login</a>
 
       </form>
-      </div>
-  </body>
-</html> -->
+    </div>
 
+    <script> //Function to show message div if message exists
+      function showMessage(message) {
+        var messageDiv = document.getElementById("messageDiv");
+        var messageSpan = document.getElementById("message");
+    
+        if (message) {
+          messageSpan.innerText = message;
+          messageDiv.style.display = "block"; //Show the message div
+        } else {
+          messageDiv.style.display = "none"; //Hide the message div if message is empty
+        }
+      }
+      var message = "{{message}}";
+      showMessage(message);
+    </script>
+
+  </body>
+</html>

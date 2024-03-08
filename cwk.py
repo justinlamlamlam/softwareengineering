@@ -175,11 +175,11 @@ def companies():
     return render_template('companies.html',companies=companies,tracked=tracked,notices=notices,company_recommendation=company_recommendation)
 
 #Individual companies page
-@app.route('/company<company_id>.html',methods=['POST','GET'])
-def company(company_id):
+@app.route('/company<companyname>.html',methods=['POST','GET'])
+def company(companyname):
 
     #Gets company from the company id 
-    company = Company.query.filter_by(id = company_id).first()
+    company = Company.query.filter_by(companyname = companyname).first()
 
     tracked_companies = Company_tracked.query.filter_by(userid = session['id'])
     tracked = []
@@ -395,10 +395,10 @@ def recommendation(companyname1):
     a=0.6
     b=2
     c=5
-    d=2
+    d=2.5
     e=1
     f=3
-    B=math.log(y,d)
+    B=math.log(y+2,d)
     F=(a*(b**x))
     G=(c/B)
     E=(e/c)

@@ -114,9 +114,8 @@ def register():
             mail.send(msg) #sends the mail 
             session['code'] = code #sets the session code to be code
             return render_template('verify.html',message='',username=username,user_password=user_password)
-
         except:
-            return render_template('register.html',message="Invalid Email or Username/Email already associated with an account")
+            return render_template('register.html',message="Username/Email already associated with an account")
     else:
         return render_template('register.html')
   

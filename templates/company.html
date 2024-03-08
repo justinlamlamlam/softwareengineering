@@ -1,8 +1,64 @@
 {% extends "layout.html" %}
 {% block content %}
+<div style="text-align: center;">
+    <div class="container">
+        <div class="card mb-4 p-3" name="companyCard" style="border-width: 0px; box-shadow: 0 0 0 6px #163970, 0 0 0 9px #1a1a1a; background-color: #97accc">
+            
+            <div class="row">
+                <div class="col-sm-3 d-flex justify-content-center align-items-center">
+                    <img src="static/logos/{{company.companyname}}" height = "150px" weight = "150px" onerror="this.onerror=null;style='display: none;'"/>
+                </div>
+                <div class="col-sm-9">
+                    <div class="row h-25">
+                        <div class="col col-sm-6 mx-auto">
+                            <a href="company{{company.id}}.html" class="btn btn-dark" style="font-size: 17px;"><b>{{company.companyname}}</b></a>
+                        </div>
+                    </div>
+                        <div class="row h-50 mt-1 me-1 border border-2 rounded border-warning bg-secondary align-items-center justify-content-center p-1">
+                            <div class="col d-flex align-items-center justify-content-center mh-100">
+                                <p class="text-center text-wrap fs-3 align-items-center justify-content-center" style="margin: 0;">
+                                    Networth: ${{company.networth}}B
+                                </p>
+                            </div>
+                            <div class="col d-flex align-items-center justify-content-center mh-100">
+                                <p class="text-center text-wrap fs-3 align-items-center justify-content-center" style="margin: 0;">
+                                    Number of employees: {{company.num_emp}}
+                                </p>
+                            </div>
+                            <div class="col d-flex align-items-center justify-content-center mh-100">
+                                <p class="text-center text-wrap fs-3 align-items-center justify-content-center" style="margin: 0;">
+                                    Stock Symbol: {{company.stock_symb}}
+                                </p>
+                            </div>
+                        </div>
+                    <div class="row h-25 mt-2">
+                        {% if company.companyname in tracked %}
+
+                        <form action="untrackcompany.html" method="GET" onsubmit="untrack()">
+                            <input class="btn btn-dark" type="hidden" name="companyname" value="{{company.companyname}}">
+                            <input class="btn btn-dark" type="submit" value="Untrack Company" style="color: rgb(233, 136, 136);">
+                        </form>
+                        <hidden style="display: none;">tracked</hidden>
+
+                        {% else %}
+
+                        <form action="trackcompany.html" method="POST">
+                            <input class="btn btn-dark" type="hidden" name="companyname" value="{{company.companyname}}">
+                            <input class="btn btn-dark" type="submit" value="Track Company">
+                        </form>
+                        <hidden style="display: none;">untracked</hidden>
+
+                        {% endif %}
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
 
 
-
+<!----
     <div class="companyinfo">
 
         <img src="static/logos/{{company.companyname}}" height = "150px" weight = "150px" onerror="this.onerror=null;style='display: none;'"/>
@@ -37,13 +93,19 @@
         </tbody>
         </table>
 
-        Current stock prices
-        {{ fig|safe }}
+        -->
 
-        <a>Latest Stories From {{company.companyname}}... (The impact of each story is ranked from -1 to 1 with -1 being strongly negatively and 1 being strongly positively)</a>
-        <br><br>
 
+        <p class="text-center fs-2" style="font-family: Poppins;">Current stock prices</p>
+        <div class="d-flex justify-content-center">
+            <div class="w-75 ">
+                {{ fig|safe }}
+            </div>
+        </div>
         
+        
+    
+        <!----
         <div class="stories">
             {% for story in stories%}
             <table>
@@ -66,7 +128,69 @@
             {% endif %}
         </div>
             
+    -->
+
+    <br>
+    <br>
+
+    <div class="container" style="text-align: center;">
+        <p class="text-start fs-2" style="font-family: Poppins;">Latest Stories From {{company.companyname}}... (The impact of each story is ranked from -1 to 1 with -1 being strongly negatively and 1 being strongly positively)</p>
+        <br>
+
+        {% for story in stories %}
+
+        <div class="card mb-5 p-4" style="border-width: 0px; box-shadow: 0 0 0 6px #163970, 0 0 0 9px #1a1a1a; background-color: #97accc">
+
+            <div class="row justify-content-center">
+                <div class="col-sm-9">
+                    <p class="mb-0" style="color: #1C1D21;">
+                        <b> <span style="font-size: 24px;">&#128240;</span> {{story.headline}}</b>
+                    </p>
+                </div>
+                    <div class="m-1 row border border-2 rounded border-warning bg-secondary justify-content-center">
+                        <div class="vstack mt-1 justify-content-center align-items-center">
+                            <div class="hstack justify-content-center">
+                                <p class="mb-0 align-items-center" style="font-size: 24px;">
+                                    &#127760;
+                                </p>
+                                <a class="p-1 align-items-center btn btn-outline-info" href="{{story.url}}" style="text-decoration: none;">
+                                    Source
+                                </a>
+                            </div>
+                            <p class="mb-0 flex-grow-1 align-items-center">
+                                <span style="font-size: 24px;">&#128197;</span>Date: {{story.timestamp}}
+                            </p>
+                            {% if story.impact >= 0 %}
+                            <p class="mb-0 flex-grow-1 align-items-center">
+                                <span style="font-size: 24px;">&#128200;</span>Possible Impact of Story on {{story.companyname}}: {{story.impact}}
+                            </p>
+                            {% else %}
+                            <p class="mb-0 flex-grow-1 align-items-center">
+                                <span style="font-size: 24px;">&#128201;</span>Possible Impact of Story on {{story.companyname}}: {{story.impact}}
+                            </p>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            {% endfor %}
+        </div>
+
         
+
+        {% if seemore %}
+            <div class="d-flex justify-content-center pb-3">
+                <form action="company{{company.id}}.html" method="POST"> 
+                    <input class="btn btn-primary" id="seemorebutton" type="submit" value="See more">
+                </form>
+            </div>
+                
+        {% endif %}
+
+        <br>
+        <br>
+        <br>
 
 
         <script>

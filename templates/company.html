@@ -1,6 +1,10 @@
 {% extends "layout.html" %}
 {% block content %}
+
+
 <div style="text-align: center;">
+    <c style="font-size:x-large;"><b>Current public reputation:</b> {{reputation}} (from -1 to 1)</c>
+    <br><br>
     <div class="container">
         <div class="card mb-4 p-3" name="companyCard" style="border-width: 0px; box-shadow: 0 0 0 6px #163970, 0 0 0 9px #1a1a1a; background-color: #97accc">
             
@@ -89,7 +93,7 @@
             <tr><td><b>Current No. Employees:</b> {{company.num_emp}}</td></tr>
             <tr><td><b>Stock Symbol:</b> {{company.stock_symb}}</td></tr>
             <tr><td><b>CEO:</b> {{company.ceoname}}</td></tr>
-            <tr><td><b>Current reputation:</b> {{reputation}} (from -1 to 1)</td></tr>
+            <tr><td><b>Current public reputation:</b> {{reputation}} (from -1 to 1)</td></tr>
         </tbody>
         </table>
 

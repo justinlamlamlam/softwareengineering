@@ -20,6 +20,9 @@ from datetime import datetime
 from dateutil.relativedelta import relativedelta
 import re 
 
+#max number of stories for each company
+maxstories = 10
+
 def webScraper():
 
     model = analysis.init()
@@ -76,6 +79,7 @@ def webScraper():
                 story = Story(company.companyname,link,headline,date,round(analysis.analyse(model,headline)[0],2))
                 db.session.add(story)
                 check_story(story)
+                checknumberofstories(company.companyname)
 
     db.session.commit()
     driver.close()
@@ -111,4 +115,32 @@ def check_story(story):
 
             db.session.commit()
         
+
+def checknumberofstories(companyname):
+
+    company_stories = Story.query.filter_by(companyname=companyname)
+    stories = []
+
+    for i in company_stories:
+        stories.append(i)
+    
+    #If there are more than max stories for the company
+    if len(stories) > maxstories:
+
+        stories.sort(key=sort_story_bydate,reverse=True)
         
+        #Delete the stories after the 10th recent 
+        for i in range(10,len(stories)):
+            db.session.delete(stories[i])
+        
+        db.session.commit()
+
+    
+
+
+#Function to help sort story by date
+def sort_story_bydate(story):
+
+    date = datetime.strptime(story.timestamp, '%Y-%m-%d')
+
+    return date

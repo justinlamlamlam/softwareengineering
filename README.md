@@ -1,33 +1,11 @@
 # softwareengineering
 
-This will be the place we do our project.
+Use ./setup.sh in linux terminal to setup the virtual environment needed for the system. All the needed external libaries will be downloaded for you.
+Once setup, go to localhost:50xxx/ and the website should load. xxx is the last three digits of warwick ID 
+(The link should also be displayed in terminal)
 
-NOTE: Private is not availble for free for more than 3 people
+A premade account is made in case errors happen with Flask Mail and no email was sent to verify the email:
+username: Test
+password: 123
 
-NOTE: This repository should not have anything named after our course code is to avoid being easily copied
-
-Searching up: '"Course Code" site: github.com' or 'Course Code after:2024-01-01' in google will give results if we include the course code.
-
-Testing123456
-
-Testing789
-
-PROCESS OF PULLING:
-
-git pull origin branch_name
-
-PROCESS OF CHANGING STUFF:
-
-Create a branch:
-git checkout -b branch_name 
-
-(After making changes) Commit change to your local repository:
-
-git add .
-
-git commit -m "Message"
-
-Push to original branch:
-git push origin branch_name
-
-Go on github and create pull request
+Running the web scraper function takes about 40 minutes so we have disabled it, but there should be existing stories in the database already. 

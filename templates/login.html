@@ -73,6 +73,83 @@ charset="utf-8">
       </form>
       
     </div>
+    
+    <div class="container">
+      <div class="row">
+        <button class="notibutton" id="notibutton" style="text-decoration: underline; background: none; border: none; text-align: center;">Terms of Service</button>
+      </div>
+    </div>
+
+    
+    
+    <div class="termservice">
+      <div class="modal-content">
+          <span class="close">&times;</span>
+          <p style="color: black;">MarketMood is an web application that allows you to monitor the public reception of companies and how that may be reflected in the financial world. You can track/untrack companies of your interest, see analysed stories posted about those companies and how it might affect the company, and even see a predicted public reputation on the companies.</p>
+          <br><br>
+          <p style="color: black;">The utilization of PublicView is governed by the subsequent terms of service:</p>
+          <p style="color: black;">-The content presented on the pages of this website is intended solely for your general information and use. It is subject to modification without prior notice.</p>
+          <p style="color: black;">-Neither we nor any third parties offer any warranty or assurance regarding the accuracy, timeliness, performance, completeness, or suitability of the information and materials provided on this website for any specific purpose. You acknowledge the possibility of inaccuracies or errors in such information and materials, and we disclaim liability for any such inaccuracies or errors to the fullest extent permitted by law.</p>
+          <p style="color: black;">-Your usage of any information or materials on this website is entirely at your own risk, and we shall not be held liable. It is your responsibility to ensure that any products, services, or information obtained through this website meet your individual requirements.</p>
+          <p style="color: black;">-This website employs cookies and website storage to retain essential data, such as your account session. By accessing this website, you consent to the storage of such data within your browser.</p>
+            
+            
+          
+          
+      </div>
+  </div>
+
+    <style>
+      .notibutton:hover {
+          color: rgb(177, 177, 255); /* Change color on hover */
+      }
+      .termservice{
+        display: none; /* Hidden by default */
+        position: fixed; /* Stay in place */
+        z-index: 5; 
+        padding-top: 100px; 
+        left: 0;
+        top: 0;
+        width: 100%; /* Full width */
+        height: 100%; /* Full height */
+        overflow: auto; /* Enable scroll if needed */
+        background-color: rgb(0,0,0); 
+        background-color: rgba(0,0,0,0.4); 
+      } 
+      .modal-content {
+        background-color: #fefefe;
+        margin: auto;
+        padding: 20px;
+        border: 1px solid #888;
+        width: 50%;
+      }
+
+    </style>
+
+    <script>
+      var modal = document.getElementsByClassName("termservice")[0];
+      // Get the button that opens the modal
+      var btn = document.getElementById("notibutton");
+      // Get the <span> element that closes the modal
+      var span = document.getElementsByClassName("close")[0];
+
+      // When the user clicks the button, open the modal 
+      btn.onclick = function() {
+          modal.style.display = "block";
+      }
+
+      // When the user clicks on <span> (x), close the modal
+      span.onclick = function() {
+          modal.style.display = "none";
+      }
+
+      // When the user clicks anywhere outside of the modal, close it
+      window.onclick = function(event) {
+      if (event.target == modal) {
+          modal.style.display = "none";
+      }
+      }
+    </script>
       
       
     <script> //Function to show message div if message exists
